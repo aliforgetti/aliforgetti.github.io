@@ -1,2 +1,1 @@
-# aliforgetti.github.io
-This is the repository for my online portfolio. 
+Repository linked to my personal [blog/portfolio](https://aliforgetti.github.io/). 
