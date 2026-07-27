@@ -5,6 +5,7 @@ tags:
   - project
 repo: https://github.com/aliforgetti/REPO
 status: building
+publish: false
 ---
 
 # Project Name

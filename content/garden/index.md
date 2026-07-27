@@ -1,5 +1,6 @@
 ---
 title: Garden
+publish: true
 ---
 
 # Garden

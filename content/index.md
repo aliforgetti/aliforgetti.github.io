@@ -1,5 +1,6 @@
 ---
 title: Ali Yaqoob
+publish: true
 ---
 
 # Ali Yaqoob
