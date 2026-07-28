@@ -51,6 +51,20 @@ body[data-slug="index"] {
   font-weight: 500;
 }
 
+// lowercase aesthetic: titles + nav
+// (body prose stays as written)
+h1, h2, h3, h4, h5, h6,
+.article-title,
+.page-title,
+.explorer,
+.breadcrumb-container,
+.toc,
+.backlinks,
+.folder-title,
+.popover .popover-title {
+  text-transform: lowercase;
+}
+
 // explorer: never clip labels
 .explorer {
   overflow: visible;
