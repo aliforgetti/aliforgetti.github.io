@@ -7,8 +7,8 @@ A running list of what I read.
 
 ## reading now
 
-| cover | book | author |
-|---|---|---|
+| cover                                                                     | book                                         | author       |
+| ------------------------------------------------------------------------- | -------------------------------------------- | ------------ |
 | <img src="https://covers.openlibrary.org/b/id/12583268-M.jpg" width="55"> | [[The Living Mountain\|the living mountain]] | Nan Shepherd |
 
 ## want to read
