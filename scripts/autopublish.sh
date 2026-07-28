@@ -5,6 +5,22 @@
 set -e
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
+# find npx (conda / nvm installs hide from launchd)
+for d in "$HOME/anaconda3/bin" "$HOME/miniconda3/bin" \
+  "$HOME/opt/anaconda3/bin" \
+  "$HOME/.nvm/versions/node"/*/bin; do
+  if [ -x "$d/npx" ]; then
+    export PATH="$d:$PATH"
+    break
+  fi
+done
+
+if ! command -v npx > /dev/null; then
+  echo "$(date '+%F %T') FATAL: npx not found" \
+    >> "$HOME/Projects/quartz/scripts/autopublish.log"
+  exit 1
+fi
+
 REPO="$HOME/Projects/quartz"
 LOG="$REPO/scripts/autopublish.log"
 cd "$REPO"
