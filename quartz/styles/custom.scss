@@ -77,6 +77,25 @@ article table td {
   padding: 0.5rem 0.8rem;
 }
 
+// tables: no grid, hairline rows only
+article table {
+  border: none;
+  border-collapse: collapse;
+}
+
+article table th,
+article table td {
+  border: none;
+  border-bottom: 1px solid var(--lightgray);
+  text-align: left;
+}
+
+article table th {
+  font-weight: 600;
+  color: var(--gray);
+  font-size: 0.85rem;
+}
+
 // explorer: never clip labels
 .explorer {
   overflow: visible;
