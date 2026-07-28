@@ -1,5 +1,5 @@
 ---
-title: Ali Yaqoob
+title: ali yaqoob
 publish: true
 ---
 

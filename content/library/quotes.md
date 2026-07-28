@@ -1,5 +1,5 @@
 ---
-title: Quotes
+title: quotes
 publish: true
 ---
 

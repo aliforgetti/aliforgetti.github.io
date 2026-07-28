@@ -1,29 +1,24 @@
 ---
-title: Books
+title: books
 publish: true
 ---
 
-A running list of what I have read.
+A running list of what I read.
 
-## Reading now
+## reading now
+
+![cover|140](https://covers.openlibrary.org/b/id/12583268-L.jpg)
 
 ### [[The Living Mountain]] — Nan Shepherd
 
+## want to read
 
-## Next 
+-
 
-
-## Want To Read 
-
-
-## Read
+## read
 
 <!-- entry format:
-### Title — Author
-![cover](url-or-local-image)
+### [[Title]] — Author
+![cover|140](cover-url)
 one line on what it left behind
 -->
-
-
-
-
