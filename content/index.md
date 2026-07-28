@@ -3,6 +3,8 @@ title: Ali Yaqoob
 publish: true
 ---
 
-# Ali Yaqoob
+Compendiums of body, heart, and thought.
 
-Data scientist. Garden + portfolio.
+- [[garden/index|Garden]] — essays, art, and notes
+- [[projects/index|Projects]] — things I have made
+- [[library/index|Library]] — things I keep

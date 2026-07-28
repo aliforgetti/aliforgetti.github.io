@@ -3,24 +3,24 @@ title: Project Name
 date: 2026-01-01
 tags:
   - project
-repo: https://github.com/aliforgetti/REPO
+  # add lenses: inference, body, heart,
+  # thought, filmspace, art ...
+link: https://github.com/aliforgetti/REPO
 status: building
 publish: false
 ---
 
-# Project Name
-
 One line: what it is.
 
-## What it does
+## What it is
 
 - point
 - point
 
-## Stack
+## Made with
 
-- tool, tool
+- tool, medium, or practice
 
 ## Links
 
-- [Repo](https://github.com/aliforgetti/REPO)
+- [Where it lives](https://github.com/aliforgetti/REPO)

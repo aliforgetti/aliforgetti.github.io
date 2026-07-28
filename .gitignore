@@ -13,3 +13,5 @@ replit.nix
 quartz/cli/tui/dist/
 scripts/autopublish.log
 scripts/autopublish.err
+scripts/backup.log
+scripts/backup.err

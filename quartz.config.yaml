@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: Quartz 5
+  pageTitle: Ali Yaqoob
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
@@ -16,30 +16,35 @@ configuration:
     fontOrigin: googleFonts
     cdnCaching: true
     typography:
-      header: Schibsted Grotesk
-      body: Source Sans Pro
+      header:
+        name: Atkinson Hyperlegible Next
+        weights: [400, 600]
+      body:
+        name: Atkinson Hyperlegible Next
+        weights: [300, 400, 600]
+        includeItalic: true
       code: IBM Plex Mono
     colors:
       lightMode:
-        light: "#faf8f8"
-        lightgray: "#e5e5e5"
-        gray: "#b8b8b8"
-        darkgray: "#4e4e4e"
-        dark: "#2b2b2b"
-        secondary: "#284b63"
-        tertiary: "#84a59d"
-        highlight: rgba(143, 159, 169, 0.15)
-        textHighlight: "#fff23688"
+        light: "#f1f2ec"
+        lightgray: "#dfe1d7"
+        gray: "#969a8c"
+        darkgray: "#42423a"
+        dark: "#2a2b25"
+        secondary: "#4a7c74"
+        tertiary: "#7d9b8e"
+        highlight: rgba(122, 143, 122, 0.12)
+        textHighlight: "#e8e3b088"
       darkMode:
-        light: "#161618"
-        lightgray: "#393639"
-        gray: "#646464"
-        darkgray: "#d4d4d4"
-        dark: "#ebebec"
-        secondary: "#7b97aa"
-        tertiary: "#84a59d"
-        highlight: rgba(143, 159, 169, 0.15)
-        textHighlight: "#b3aa0288"
+        light: "#f1f2ec"
+        lightgray: "#dfe1d7"
+        gray: "#969a8c"
+        darkgray: "#42423a"
+        dark: "#2a2b25"
+        secondary: "#4a7c74"
+        tertiary: "#7d9b8e"
+        highlight: rgba(122, 143, 122, 0.12)
+        textHighlight: "#e8e3b088"
 plugins:
   - source: "@quartz-community/created-modified-date"
     enabled: true
@@ -111,7 +116,7 @@ plugins:
   - source: "@quartz-community/quartz-fonts"
     enabled: true
   - source: "@quartz-themes/core"
-    enabled: true
+    enabled: false
     options:
       theme: default
       mode: both
@@ -201,7 +206,7 @@ plugins:
       position: left
       priority: 10
   - source: "@quartz-community/darkmode"
-    enabled: true
+    enabled: false
     layout:
       position: left
       priority: 30
@@ -230,8 +235,8 @@ plugins:
     enabled: true
     options:
       links:
-        GitHub: https://github.com/jackyzha0/quartz
-        Discord Community: https://discord.gg/cRFFHYye7t
+        GitHub: https://github.com/aliforgetti
+        LinkedIn: https://www.linkedin.com/in/aliyaqoob/
   - source: "@quartz-community/recent-notes"
     enabled: false
   - source: "@quartz-community/spacer"

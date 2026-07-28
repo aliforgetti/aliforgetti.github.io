@@ -1,3 +1,62 @@
 @use "./variables.scss" as *;
 
-// put your custom CSS here!
+// --- ADHD-friendly reading bundle ---
+
+// bigger base text (18px), scales whole site
+html {
+  font-size: 18px;
+}
+
+// thinner body text, calmer headers
+body {
+  font-weight: 300;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+}
+
+strong, b {
+  font-weight: 600;
+}
+
+// easy eye-tracking: room between rows,
+// short lines, breathing letters,
+// visible paragraph chunks
+article {
+  line-height: 1.6;
+  max-width: 65ch;
+  letter-spacing: 0.01em;
+
+  p {
+    margin-bottom: 1.4rem;
+  }
+
+  li {
+    margin-bottom: 0.4rem;
+  }
+}
+
+// homepage: hide duplicate title + date
+// (sidebar already says Ali Yaqoob)
+body[data-slug="index"] {
+  .article-title,
+  .content-meta {
+    display: none;
+  }
+}
+
+// sidebar site title: calmer weight
+.page-title {
+  font-weight: 500;
+}
+
+// explorer: never clip labels
+.explorer {
+  overflow: visible;
+
+  a {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+}
