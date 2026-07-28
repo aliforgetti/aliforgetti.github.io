@@ -5,7 +5,7 @@ status: reading
 publish: true
 ---
 
-![cover|180](https://covers.openlibrary.org/b/id/12583268-L.jpg)
+![cover|120](https://covers.openlibrary.org/b/id/12583268-L.jpg)
 
 A celebration of the Cairngorm mountains of Scotland.
 
