@@ -1,7 +1,5 @@
 ---
 title: Quotes
-tags:
-  - library
 publish: true
 ---
 

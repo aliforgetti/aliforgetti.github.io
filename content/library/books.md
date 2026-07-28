@@ -1,7 +1,5 @@
 ---
 title: Books
-tags:
-  - library
 publish: true
 ---
 
