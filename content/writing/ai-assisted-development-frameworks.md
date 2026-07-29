@@ -7,6 +7,7 @@ tags:
   - learning
   - ai
   - software-engineering
+  - harness-engineering
 ---
 
 > [!note] Learning in progress
@@ -31,6 +32,9 @@ tags:
 - SW 3.0: humans prompt general models in natural language
 - Conceptual umbrella, not a process
 - Source: [Karpathy, Software Is Changing (Again)](https://www.youtube.com/watch?v=LCEmiRjPEtQ)
+- **See it in practice:**
+  - [llmwiki](https://github.com/lucasastorian/llmwiki) — an AI autonomously writes and maintains a personal wiki over MCP
+  - [Karpathy's LLM Wiki concept (gist)](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — the source sketch llmwiki implements
 
 ## 2. Vibe coding
 
@@ -39,12 +43,20 @@ tags:
 - Bad: production, sensitive data, pipelines, anything maintained
 - Original definition (Willison): NOT all AI-assisted coding
 - Source: [Willison, Not all AI-assisted programming is vibe coding](https://simonwillison.net/2025/Mar/19/vibe-coding/)
+- **See it in practice:**
+  - [Karpathy, "Vibe coding MenuGen"](https://karpathy.bearblog.dev/vibe-coding-menugen/) — blow-by-blow of vibe-coding a real app end to end
+  - [Cursor](https://cursor.com/) — the canonical "autonomy slider" AI editor
+  - [Lovable](https://lovable.dev/) — describe an app in chat, watch it build and deploy
+  - [v0 by Vercel](https://v0.app/) — prompt-to-full-stack-app with templates you can open and inspect
 
 ## 3. Pseudocode-driven
 
 - Human owns the algorithm, AI translates to Spark/SQL/Python
 - No settled name: intent-driven, algorithm-first, implementation delegation
 - Weakness: pseudocode omits edge cases, architecture, correctness criteria
+- **See it in practice** (thin tooling — this rung has no serious canonical tool yet):
+  - [pseudoc](https://github.com/vytskalt/pseudoc) — proof-of-concept: an LLM compiles pseudocode to a native binary
+  - [From Pseudocode to Production](https://www.gocodeo.com/post/from-pseudocode-to-production-leveraging-ai-for-end-to-end-code-generation) — worked walkthrough of pseudocode → production prompts
 
 ## 4. Structured prompt-driven (SPDD, Thoughtworks)
 
@@ -53,6 +65,9 @@ tags:
 - Flow: requirements → clarification → context → prompt → code → tests
 - Fits teams that want AI without restructuring their process
 - Source: [Fowler/Thoughtworks, SPDD](https://martinfowler.com/articles/structured-prompt-driven/)
+- **See it in practice:**
+  - [open-spdd](https://github.com/gszhangwei/open-spdd) — CLI that manages SPDD prompt/command templates across Cursor, Claude Code, Copilot
+  - [token-billing](https://github.com/gszhangwei/token-billing) — the article's companion repo: SPDD applied to a real Spring Boot feature
 
 ## 5. Spec-driven development (SDD)
 
@@ -63,6 +78,10 @@ tags:
 - **OpenSpec**: lighter, incremental, existing-codebase friendly
 - vs pseudocode: "what the system must do" vs "how I would solve it"
 - Sources: [Fowler, Understanding SDD tools](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) | [Spec Kit](https://github.github.com/spec-kit/) | [Kiro deep dive](https://kiro.dev/blog/from-chat-to-specs-deep-dive/) | [OpenSpec](https://github.com/Fission-AI/openspec)
+- **See it in practice** (each ships runnable example specs):
+  - [GitHub Spec Kit](https://github.com/github/spec-kit) — open-source SDD toolkit/CLI; works with Claude Code, Copilot, Gemini, Cursor
+  - [AWS Kiro](https://kiro.dev/) — spec-first agentic IDE: prompts → requirements, design, sequenced tasks
+  - [OpenSpec](https://github.com/Fission-AI/OpenSpec) — lightweight delta-spec framework; agree on the spec before code
 
 ## 6. Test/contract-driven agentic
 
@@ -70,6 +89,10 @@ tags:
 - Agent loop: write tests → implement → run → inspect failures → revise
 - Builds on TDD, BDD, design-by-contract, property-based testing
 - Key line: pseudocode = how you imagine solving it; tests = what must remain true
+- **See it in practice:**
+  - [Aider — linting & testing](https://aider.chat/docs/usage/lint-test.html) — `--auto-test`: agent runs tests, reads failures, fixes in a loop
+  - [TDD with GitHub Copilot](https://martinfowler.com/articles/exploring-gen-ai/06-tdd-with-coding-assistance.html) — concrete red-green-refactor walkthrough with an assistant
+  - [Aider (repo)](https://github.com/Aider-AI/aider) — the terminal pair-programmer behind that feedback loop
 
 ## 7. Harness engineering
 
@@ -79,6 +102,11 @@ tags:
 - Goal: fast automatic error detection, not model infallibility
 - Likely more important than prompting skill for professional work
 - Source: [Fowler, Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html)
+- **See it in practice:**
+  - [OpenAI, "Harness engineering" with Codex](https://openai.com/index/harness-engineering/) — real harness: custom linters, structural tests, observability, cleanup agents
+  - [SWE-bench](https://github.com/SWE-bench/SWE-bench) — containerized eval harness that runs agents against real GitHub issues
+  - [OpenAI Codex CLI (repo)](https://github.com/openai/codex) — open-source terminal coding agent the article builds on
+- **Related:** the harness's context and persistent state is its own topic — see [[writing/agent-memory-architecture|context & memory architecture for coding agents]] (CLAUDE.md, SKILL.md, ADRs, worklogs, hooks, subagents, memory banks)
 
 ## 8. Human on the loop
 
@@ -86,6 +114,9 @@ tags:
 - Agent owns the HOW loop: code, tests, files, PRs
 - Human supervises the system, not every keystroke
 - Source: [Fowler, Humans and Agents in SE Loops](https://martinfowler.com/articles/exploring-gen-ai/humans-and-agents.html)
+- **See it in practice:**
+  - [OpenAI, "Harness engineering"](https://openai.com/index/harness-engineering/) — team account of "humans steer, agents execute," pushing review agent-to-agent
+  - [Exploring Generative AI — series hub](https://martinfowler.com/articles/exploring-gen-ai.html) — index linking the loops / harness / spec-driven write-ups
 
 ## 9. Multi-agent orchestration
 
@@ -93,6 +124,10 @@ tags:
 - Example: OpenAI Symphony (project board as control plane, task-per-agent)
 - Human role shifts to: product owner + architect + eng manager + reviewer
 - Source: [OpenAI Symphony](https://openai.com/index/open-source-codex-orchestration-symphony/)
+- **See it in practice:**
+  - [OpenAI Symphony (repo)](https://github.com/openai/symphony) — reference: autonomous agents driven from an issue tracker through to PR
+  - [CrewAI](https://github.com/crewAIInc/crewAI) — framework for role-based agents (planner / implementer / reviewer)
+  - [Microsoft AutoGen](https://github.com/microsoft/autogen) — multi-agent framework (now maintenance mode; successor: [Agent Framework](https://github.com/microsoft/agent-framework))
 
 ## 10. NL → formal specification
 
@@ -100,6 +135,9 @@ tags:
 - Can prove invariants, forbidden states, spec conformance
 - Unsolved: ambiguous prose → correct formal requirements
 - Source: [arXiv 2506.11874, Formalising requirements with LLMs](https://arxiv.org/html/2506.11874v1)
+- **See it in practice:**
+  - [Dafny](https://dafny.org/) — verification-aware language: write pre/post-conditions and invariants, the verifier proves them
+  - [Dafny (repo)](https://github.com/dafny-lang/dafny) — source, reference manual, and tutorials
 
 ## Where this is heading
 
