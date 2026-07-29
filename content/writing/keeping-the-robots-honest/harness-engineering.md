@@ -11,34 +11,68 @@ tags:
 ---
 
 > [!note] Learning in progress
-> Part of [[writing/keeping-the-robots-honest/index|keeping the robots honest]]. Not a rung on [[writing/keeping-the-robots-honest/the-ladder|the ladder]] but the environment those rungs run inside. Bullet structure intentional.
+> Part of [[writing/keeping-the-robots-honest/index|keeping the robots honest]]. The spine of the cluster: every philosophy plugs into one of its components. Bullet structure intentional.
 
-*Engineer the environment, not the prompt.* A **harness** is the controlled environment an agent runs in:
+*Engineer the environment, not the prompt.* A **harness** is the controlled environment an agent runs in: **guides** (feed-forward), **sensors** (feedback), and a **loop** (orchestration) that ties them together. Everything else in this cluster is a bet on one of those three.
 
-- **Guides (feed-forward)** - context, rules, specs, examples, memory that prevent errors before they happen
-- **Sensors (feedback)** - tests, linters, type checks, scans, evals, review gates that catch errors automatically
-- **Loop (orchestration)** - how guides and sensors are wired into the agent's run
+## why we need it
 
-Fowler & Böckeler frame it as a cybernetic system; OpenAI's Codex team built ~1M lines with "zero hand-written code" by leaning on it. The takeaway across both: for professional work, harness quality matters more than prompting skill.
+- Models are capable but unreliable: they hallucinate, drift, forget across sessions, and produce plausible-but-wrong code with full confidence.
+- Prompting alone has diminishing returns. In professional work the bottleneck is not phrasing; it's preventing and catching errors.
+- The environment is the real lever: good context up front plus fast automatic checks raise the quality floor far more than a cleverer prompt.
+- It converts "hope it works" into "the system catches it when it doesn't": determinism where you can, human judgment where you must.
+- It is what lets you delegate more without losing control: you supervise the system, not every keystroke.
+- Evidence: OpenAI built ~1M lines leaning on the harness; Fowler & Böckeler argue harness quality beats prompting skill for professional work ([Fowler](https://martinfowler.com/articles/harness-engineering.html), [OpenAI](https://openai.com/index/harness-engineering/)).
 
-## Components (a taxonomy)
+## the three components
 
-- **Feed-forward context & guides** - rules files (`AGENTS.md`/`CLAUDE.md`/skills), curated context, specs/plans/memory checked into the repo. Deep dive: [[writing/keeping-the-robots-honest/agent-memory-architecture|context & memory architecture]]. See also [context engineering for coding agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html)
-- **Agent-computer interface (ACI)** - purpose-built commands to view/search/edit files with guardrails and concise feedback; interface design, not just the model, drives performance ([SWE-agent paper](https://arxiv.org/abs/2405.15793))
-- **Execution sandbox / environment** - isolated, reproducible run environment so the agent can execute and test safely ([OpenAI sandbox write-up](https://openai.com/index/building-codex-windows-sandbox/))
-- **Feedback sensors** - deterministic, run-on-every-change checks: tests, lint, types, structural/architecture tests, dependency scans. Fowler splits these into **computational** (fast, deterministic) vs **inferential** (LLM-judge; slow, non-deterministic) ([sensors for coding agents](https://martinfowler.com/articles/sensors-for-coding-agents.html))
-- **Self-repair loop** - feed sensor output straight back to the model to fix itself ([Aider auto lint/test](https://aider.chat/docs/usage/lint-test.html))
-- **Evals / benchmarks** - task suites graded automatically (e.g. real GitHub issue → patch, checked by fail-to-pass tests) ([SWE-bench](https://www.swebench.com/))
-- **Review & guardrails** - agent self-review + dedicated reviewer agents in a loop; policy gates; custom lints whose *error messages* inject remediation ("positive prompt injection")
-- **Observability / logging** - agent-legible telemetry (logs, metrics, traces, DevTools) so the agent can reproduce and verify
-- **Orchestration / loop design** - initializer + coding-agent split, incremental per-feature progress, clean-state commits that bridge many context windows ([Anthropic: long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents))
+Vibe coding bets on none of these (just eyeball the output). Formal spec bets on two at once (its spec is a guide, its verifier is a sensor). Most philosophies pick one.
 
-## Two mental models
+### Guides · feed-forward
 
-- **Guides prevent, sensors correct.** Feed-forward reduces the error rate up front; feedback catches what slips through. A good harness invests in both, not just prompts.
-- **Computational vs inferential sensors.** Computational (tests, lint, types) are cheap/deterministic → run on every change. Inferential (LLM-as-judge) are expensive/flaky → run selectively. This tradeoff shapes the whole loop.
+**Purpose: prevention.** Give the agent intent, conventions, architecture, examples, and memory so it does not have to guess. Lowers the error rate before it writes a line.
 
-## Other approaches & variants
+- **Plugs in here:** pseudocode, light spec, SPDD, spec-driven, rules files, and the *spec* half of formal spec
+- **Deep dive:** [[writing/keeping-the-robots-honest/agent-memory-architecture|context & memory architecture]] is the persistent-state slice of guides (CLAUDE.md, specs, ADRs, worklogs)
+- The discipline of choosing *what* to feed and *when* is [context engineering](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html); the failure mode is a bloated guide that rots and crowds out the task
+
+### Sensors · feedback
+
+**Purpose: detection and self-correction.** Catch errors after the agent acts, automatically and fast, and feed failures back so it repairs itself.
+
+- **Plugs in here:** tests and contracts, lint and types, evals, and the *proof* half of formal spec
+- **Two kinds** ([sensors for coding agents](https://martinfowler.com/articles/sensors-for-coding-agents.html)):
+  - **Computational** - tests, lint, types: cheap, deterministic, run on every change
+  - **Inferential** - LLM-as-judge: costly and flaky, run selectively
+- Self-repair in practice: the agent reads sensor output and fixes itself in a loop ([Aider auto lint/test](https://aider.chat/docs/usage/lint-test.html))
+
+### Loop · orchestration
+
+**Purpose: control and division of labor.** Decide who does what, when work passes between human and agent(s), and how state survives across context windows.
+
+- **Plugs in here:** human-on-the-loop, multi-agent orchestration
+- **Patterns:** self-repair loops; an initializer + coding-agent split that bridges many context windows for long-running work ([Anthropic: long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents))
+
+## supporting components
+
+Less philosophical, but a real harness needs them:
+
+- **Agent-computer interface (ACI)** - purpose: make the agent's actions legible and guard-railed. Purpose-built view/search/edit commands beat raw shell ([SWE-agent](https://arxiv.org/abs/2405.15793))
+- **Execution sandbox** - purpose: run and test safely, with no blast radius ([OpenAI sandbox](https://openai.com/index/building-codex-windows-sandbox/))
+- **Observability / logging** - purpose: let the agent reproduce and verify its own work (logs, metrics, traces, DevTools)
+- **Evals / benchmarks** - purpose: grade whole-task performance, not just single checks ([SWE-bench](https://www.swebench.com/))
+
+## how the loop runs
+
+1. Intent plus guides go in (context, rules, spec, examples, memory)
+2. The agent acts (writes or edits code)
+3. Sensors check automatically (tests, lint, types, review gates)
+4. Failures feed back; the agent revises
+5. Repeat until sensors pass; the human on the loop sets direction and reviews the result
+
+The whole point is that steps 3 and 4 happen without you watching every keystroke.
+
+## other approaches & variants
 
 - **Fowler / Böckeler - guides + sensors** - the cybernetic framing; computational vs inferential; "keep quality left" ([harness engineering](https://martinfowler.com/articles/harness-engineering.html))
 - **OpenAI Codex - engineer the environment** - architecture enforced by custom linters, `docs/` as system-of-record, "garbage-collection" agents ([harness engineering](https://openai.com/index/harness-engineering/))
@@ -46,19 +80,19 @@ Fowler & Böckeler frame it as a cybernetic system; OpenAI's Codex team built ~1
 - **Aider - deterministic test/lint loop** - auto-lint and auto-test after every edit, retry with structured error feedback ([docs](https://aider.chat/docs/usage/lint-test.html))
 - **Anthropic - long-running-agent harness** - initializer + incremental coding agent bridging many context windows ([write-up](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents))
 
-## Open problems
+## open problems
 
 - **Reward / eval hacking** - agents pass tests by cheating (special-casing, editing or deleting tests). CoT monitoring helps but is fragile ([OpenAI, CoT monitoring](https://openai.com/index/chain-of-thought-monitoring/))
 - **Benchmark overfitting & contamination** - public benchmarks leak into training and get scaffold-tuned, inflating scores ([SWE-bench Pro](https://arxiv.org/abs/2509.16941))
 - **Verification gap** - tests pass but code is wrong; correctness is outside any sensor's remit if intent was under-specified. Fowler calls the "behaviour harness" the elephant in the room
 - **Flaky / slow / costly feedback** - inferential sensors can't run on every commit; forces quality-left tradeoffs and re-runs instead of hard blocks
-- **Context limits vs. memory** - "context rot"; each session starts amnesiac; a monolithic rules file rots and crowds out the task (the whole reason the memory layer exists)
+- **Context limits vs. memory** - "context rot"; each session starts amnesiac; a monolithic rules file rots and crowds out the task
 - **Security of autonomous tool use** - sandbox escape and unsafe actions motivate dedicated sandboxing ([OpenAI sandbox](https://openai.com/index/building-codex-windows-sandbox/))
-- **Non-determinism & reproducibility** - model stochasticity + non-deterministic sensors make outcomes hard to reproduce
-- **Harness coherence at scale** - keeping guides/sensors in sync, non-contradictory, and measurable ("code coverage, but for harnesses"); architectural coherence over years in an agent-generated codebase is unknown
+- **Non-determinism & reproducibility** - model stochasticity plus non-deterministic sensors make outcomes hard to reproduce
+- **Harness coherence at scale** - keeping guides and sensors in sync, non-contradictory, and measurable ("code coverage, but for harnesses")
 - **Where human judgment stays** - taste, accountability, organizational memory, which conventions are load-bearing vs. habitual; the goal is to *direct* human input, not remove it
 
-## Sources
+## sources
 
 - Fowler & Böckeler: [Harness engineering](https://martinfowler.com/articles/harness-engineering.html) · [Sensors for coding agents](https://martinfowler.com/articles/sensors-for-coding-agents.html) · [Context engineering for coding agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html)
 - OpenAI: [Harness engineering](https://openai.com/index/harness-engineering/) · [Codex sandbox](https://openai.com/index/building-codex-windows-sandbox/) · [Chain-of-thought monitoring](https://openai.com/index/chain-of-thought-monitoring/)

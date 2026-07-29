@@ -13,7 +13,7 @@ tags:
 > [!note] Learning in progress
 > Part of [[writing/keeping-the-robots-honest/index|keeping the robots honest]]. Working notes, bullet structure intentional.
 >
-> The cleaner frame: this reads as a ladder, but it's really one question asked per responsibility - who owns intent, algorithm, implementation, verification? Each rung just moves that line. See the [[writing/keeping-the-robots-honest/index|map]].
+> The cleaner frame: this reads as a ladder, but each philosophy is really a bet on one [[writing/keeping-the-robots-honest/harness-engineering|harness]] component - guides, sensors, or loop. See the [[writing/keeping-the-robots-honest/index|map]]. The rung-by-rung detail below is the same set, laid out as a spectrum.
 
 *Research digest, July 2026. No single standard exists yet. Frameworks below are ordered by increasing structure and decreasing human implementation control.*
 
@@ -26,6 +26,17 @@ tags:
 - **Test/contract-driven**: "here are the properties that must hold"
 - **Harness engineering**: "here is the controlled environment the agent runs in"
 - **Formal specification**: "here is a mathematically verifiable correctness definition"
+
+## grouped by harness component
+
+Each philosophy mainly feeds one part of the [[writing/keeping-the-robots-honest/harness-engineering|harness]]:
+
+- **Guides (feed-forward):** pseudocode, SPDD, spec-driven, memory / rules, and the spec half of formal
+- **Sensors (feedback):** test/contract-driven, evals, the proof half of formal
+- **Loop (orchestration):** human-on-the-loop, multi-agent
+- **No harness:** vibe coding, prompt-driven (judge by output)
+
+The hybrid this digest lands on spans two components: pseudocode + light spec (guides) and tests (sensors). The rung-by-rung detail below is that same set as a spectrum.
 
 ## 1. Software 3.0 (Karpathy)
 
