@@ -104,7 +104,7 @@
   <!-- ============ RADAR ============ -->
   <div class="viz-card">
     <h3>Framing C · Six good-software dimensions</h3>
-    <p class="sub">No single framework fills the hexagon - but the <b style="color:#7048e8">proposed hybrid</b> (dashed) nearly does. Toggle any framework to compare, or isolate one.</p>
+    <p class="sub">No single framework fills the hexagon — but the <b style="color:#7048e8">proposed hybrid</b> (dashed) nearly does. Toggle any framework to compare, or isolate one.</p>
     <div class="toggles" id="radar-toggles"></div>
     <div class="chart-wrap radar-wrap"><canvas id="radarChart"></canvas></div>
     <p class="caption"><b>Read:</b> Vibe is a spike (velocity + ease, collapses elsewhere). Pseudocode alone peaks on skill retention. Harness is the widest polygon but weak on ease of adoption. The union of pseudocode + tests + light spec covers nearly the whole shape.</p>
@@ -115,15 +115,15 @@
     <h3>Framing A · Process axes</h3>
     <p class="sub">Who owns the reasoning (x) vs. how automatically failures get caught (y).</p>
     <div class="chart-wrap scatter-wrap"><canvas id="scatterA"></canvas></div>
-    <p class="caption"><b>Read:</b> The top-right quadrant (8+, 8+) is empty of existing frameworks. The <b style="color:#7048e8">proposed hybrid</b> lands there - take pseudocode's high ownership (8) and raise verification to 8 with acceptance tests. Cheapest way into the target zone.</p>
+    <p class="caption"><b>Read:</b> The top-right quadrant (8+, 8+) is empty of existing frameworks. The <b style="color:#7048e8">proposed hybrid</b> lands there — take pseudocode's high ownership (8) and raise verification to 8 with acceptance tests. Cheapest way into the target zone.</p>
   </div>
 
   <!-- ============ SCATTER B ============ -->
   <div class="viz-card">
     <h3>Framing B · Outcome axes (ISO 25010 style)</h3>
-    <p class="sub">Correctness assurance (x) vs. maintainability &amp; comprehension (y) - the cognitive-debt axis.</p>
+    <p class="sub">Correctness assurance (x) vs. maintainability &amp; comprehension (y) — the cognitive-debt axis.</p>
     <div class="chart-wrap scatter-wrap"><canvas id="scatterB"></canvas></div>
-    <p class="caption"><b>Read:</b> Spec-driven scores best of the existing frameworks (7, 7). Your position today sits near (6, 8) - strong comprehension, weaker correctness. Adding pre-implementation acceptance tests moves the <b style="color:#7048e8">proposed hybrid</b> toward the (8, 8) target.</p>
+    <p class="caption"><b>Read:</b> Spec-driven scores best of the existing frameworks (7, 7). Your position today sits near (6, 8) — strong comprehension, weaker correctness. Adding pre-implementation acceptance tests moves the <b style="color:#7048e8">proposed hybrid</b> toward the (8, 8) target.</p>
   </div>
 </div>
 
