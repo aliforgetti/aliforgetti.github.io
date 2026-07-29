@@ -23,10 +23,25 @@
       #ai-frameworks-viz {
         --card: rgba(180,180,190,0.06);
         --border: rgba(180,180,190,0.20);
-        --text: #d8d8de;
-        --muted: #9a9aa4;
-        --grid: rgba(180,180,190,0.16);
+        --text: #e9e9ef;
+        --muted: #adadb8;
+        --grid: rgba(180,182,196,0.24);
       }
+    }
+    /* JS sets data-theme from the host page (Quartz), overriding OS preference */
+    #ai-frameworks-viz[data-theme="light"] {
+      --card: rgba(120,122,140,0.06);
+      --border: rgba(90,92,110,0.22);
+      --text: #1e1e24;
+      --muted: #4a4a53;
+      --grid: rgba(70,72,86,0.20);
+    }
+    #ai-frameworks-viz[data-theme="dark"] {
+      --card: rgba(180,180,190,0.06);
+      --border: rgba(180,180,190,0.20);
+      --text: #e9e9ef;
+      --muted: #adadb8;
+      --grid: rgba(180,182,196,0.24);
     }
     #ai-frameworks-viz .viz-card {
       background: var(--card);
@@ -48,7 +63,7 @@
     }
     #ai-frameworks-viz .chart-wrap { position: relative; width: 100%; }
     #ai-frameworks-viz .radar-wrap { height: 440px; }
-    #ai-frameworks-viz .scatter-wrap { height: 420px; }
+    #ai-frameworks-viz .scatter-wrap { height: 480px; }
     #ai-frameworks-viz .toggles {
       display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px;
       align-items: center;
@@ -117,12 +132,46 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
 <script>
 (function () {
+  var charts = [];
+  // Detect the ACTUAL host-page theme (Quartz toggle), not the OS setting.
+  function isDark() {
+    try {
+      var pd = window.parent && window.parent !== window ? window.parent.document : null;
+      if (pd) {
+        var root = pd.documentElement;
+        var t = root.getAttribute('saved-theme') || root.getAttribute('data-theme');
+        if (t) return t === 'dark';
+        var bg = getComputedStyle(pd.body || root).backgroundColor;
+        var m = bg && bg.match(/\d+(\.\d+)?/g);
+        if (m && m.length >= 3 && !(m[3] !== undefined && +m[3] === 0)) {
+          var lum = (0.299*+m[0] + 0.587*+m[1] + 0.114*+m[2]) / 255;
+          return lum < 0.5;
+        }
+      }
+    } catch (e) {}
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  var TEXT, MUTED, GRID;
+  function palette() {
+    var d = isDark();
+    TEXT  = d ? '#e9e9ef' : '#1e1e24';
+    MUTED = d ? '#adadb8' : '#4a4a53';
+    GRID  = d ? 'rgba(180,182,196,0.24)' : 'rgba(70,72,86,0.20)';
+    var el = document.getElementById('ai-frameworks-viz');
+    if (el) el.setAttribute('data-theme', d ? 'dark' : 'light');
+  }
+  // keep the embedding iframe sized to content (fixes layout gaps / clipping)
+  function fitFrame() {
+    try {
+      if (window.frameElement) {
+        window.frameElement.style.height = document.documentElement.scrollHeight + 'px';
+      }
+    } catch (e) {}
+  }
   function boot() {
     if (!window.Chart) { return setTimeout(boot, 60); }
+    palette();
     var css = getComputedStyle(document.getElementById('ai-frameworks-viz'));
-    var TEXT = css.getPropertyValue('--text').trim() || '#2c2c31';
-    var MUTED = css.getPropertyValue('--muted').trim() || '#6b6b73';
-    var GRID = css.getPropertyValue('--grid').trim() || 'rgba(120,120,130,0.18)';
     var C = {
       vibe: css.getPropertyValue('--vibe').trim() || '#d64545',
       pseudo: css.getPropertyValue('--pseudo').trim() || '#2f9e6f',
@@ -184,11 +233,12 @@
             ticks: { stepSize: 2, backdropColor: 'transparent', color: MUTED, font: { size: 10 } },
             grid: { color: GRID },
             angleLines: { color: GRID },
-            pointLabels: { color: TEXT, font: { size: 12.5 } }
+            pointLabels: { color: TEXT, font: { size: 13, weight: '500' } }
           }
         }
       }
     });
+    charts.push(radar);
 
     /* Toggle chips */
     var togWrap = document.getElementById('radar-toggles');
@@ -250,23 +300,23 @@
             },
             datalabels: {
               color: TEXT,
-              font: { size: 11.5, weight: '500' },
+              font: { size: 12, weight: '600' },
               clamp: true,
               formatter: function (v) { return v.label; },
               align: function (ctx) { return ctx.dataset.data[ctx.dataIndex].align; },
               anchor: 'center',
-              offset: 7
+              offset: 8
             }
           },
           scales: {
             x: {
-              min: 0, max: 11, title: { display: true, color: MUTED },
-              ticks: { stepSize: 2, color: MUTED, callback: function (v) { return v <= 10 ? v : ''; } },
+              min: 0, max: 11, title: { display: true, color: TEXT, font: { size: 12.5, weight: '600' } },
+              ticks: { stepSize: 2, color: MUTED, font: { size: 11 }, callback: function (v) { return v <= 10 ? v : ''; } },
               grid: { color: GRID }
             },
             y: {
-              min: 0, max: 11, title: { display: true, color: MUTED },
-              ticks: { stepSize: 2, color: MUTED, callback: function (v) { return v <= 10 ? v : ''; } },
+              min: 0, max: 11, title: { display: true, color: TEXT, font: { size: 12.5, weight: '600' } },
+              ticks: { stepSize: 2, color: MUTED, font: { size: 11 }, callback: function (v) { return v <= 10 ? v : ''; } },
               grid: { color: GRID }
             }
           }
@@ -282,8 +332,8 @@
     // emphasized proposed-hybrid dataset (star markers, colored labels)
     function hybridDs(points) {
       return ds('Proposed hybrid', HYB, points, {
-        pointStyle: 'star', pointRadius: 14, pointHoverRadius: 16, borderColor: '#fff', borderWidth: 1.5,
-        datalabels: { color: HYB, font: { size: 12, weight: '700' } }
+        pointStyle: 'star', pointRadius: 13, pointHoverRadius: 15, borderColor: '#fff', borderWidth: 1.5,
+        datalabels: { color: HYB, font: { size: 12, weight: '700' }, offset: 15 }
       });
     }
     function targetBox(x1, y1, label, color) {
@@ -302,7 +352,7 @@
         type: 'line', xMin: x1, yMin: y1, xMax: x2, yMax: y2,
         borderColor: HYB, borderWidth: 2, borderDash: [4, 3],
         arrowHeads: { end: { display: true, borderColor: HYB, backgroundColor: HYB, width: 7, length: 9 } },
-        label: { display: true, content: text, position: 'center', color: HYB,
+        label: { display: !!text, content: text || '', position: 'center', color: HYB,
           backgroundColor: 'transparent', font: { size: 10, weight: '600' },
           rotation: adj.rotation || 0, xAdjust: adj.xAdjust || 0, yAdjust: adj.yAdjust || 0 }
       };
@@ -310,34 +360,72 @@
 
     /* ---------------- SCATTER A ---------------- */
     var cfgA = scatterConfig([
-      ds('Faith cluster', CL.red,      [ pt(2,1,'Vibe'), pt(3,2,'Prompt-driven') ]),
+      ds('Faith cluster', CL.red,      [ pt(2,1,'Vibe','right'), pt(3,2,'Prompt-driven','right') ]),
       ds('Craft cluster', CL.gold,     [ pt(8,3,'Pseudocode','left') ]),
-      ds('Artifact cluster', CL.blue,  [ pt(7,5,'SPDD'), pt(6,6,'Spec-driven') ]),
-      ds('Systems cluster', CL.green,  [ pt(3,7,'Multi-agent'), pt(4,6,'On the loop'), pt(5,8,'Test-driven'), pt(5,9,'Harness') ]),
+      ds('Artifact cluster', CL.blue,  [ pt(7,5,'SPDD','left'), pt(6,6,'Spec-driven','right') ]),
+      ds('Systems cluster', CL.green,  [ pt(3,7,'Multi-agent','right'), pt(4,6,'On the loop','left'), pt(5,8,'Test-driven','left'), pt(5,9,'Harness','right') ]),
       ds('Rigor outlier', CL.purple,   [ pt(7,10,'Formal spec','left') ]),
-      hybridDs([ pt(8,8,'Proposed hybrid','left') ])
+      hybridDs([ pt(8,8,'Proposed hybrid','top') ])
     ], {
       target: targetBox(8, 8, 'Target quadrant', CL.green),
-      lift: arrow(8, 3.4, 8, 7.5, '+ acceptance tests', { rotation: -90, xAdjust: -11 })
+      lift: arrow(8, 3.4, 8, 7.4, '', { })
     });
     cfgA.options.scales.x.title.text = 'Human reasoning ownership →';
     cfgA.options.scales.y.title.text = 'Verification rigor →';
-    new Chart(document.getElementById('scatterA'), cfgA);
+    charts.push(new Chart(document.getElementById('scatterA'), cfgA));
 
     /* ---------------- SCATTER B ---------------- */
     var cfgB = scatterConfig([
-      ds('Poor software zone', CL.red,     [ pt(2,1,'Vibe'), pt(3,3,'Prompt-driven') ]),
-      ds('Fragile-correct zone', CL.gold,  [ pt(10,5,'Formal spec','left'), pt(6,4,'On the loop'), pt(6,3,'Multi-agent') ]),
-      ds('Balanced zone', CL.blue,         [ pt(7,7,'Spec-driven'), pt(6,6,'SPDD','left'), pt(8,6,'Harness'), pt(8,5,'Test-driven','bottom') ]),
-      ds('Comprehension-first', CL.green,  [ pt(5,8,'Pseudocode') ]),
-      hybridDs([ pt(6,8,'Hybrid · today','top'), pt(8,8,'Hybrid · target','left') ])
+      ds('Poor software zone', CL.red,     [ pt(2,1,'Vibe','right'), pt(3,3,'Prompt-driven','right') ]),
+      ds('Fragile-correct zone', CL.gold,  [ pt(10,5,'Formal spec','left'), pt(6,4,'On the loop','left'), pt(6,3,'Multi-agent','bottom') ]),
+      ds('Balanced zone', CL.blue,         [ pt(7,7,'Spec-driven','right'), pt(6,6,'SPDD','left'), pt(8,6,'Harness','right'), pt(8,5,'Test-driven','bottom') ]),
+      ds('Comprehension-first', CL.green,  [ pt(5,8,'Pseudocode','left') ]),
+      hybridDs([ pt(6,8,'today','top'), pt(8,8,'target','top') ])
     ], {
       good: targetBox(7, 7, 'Good-software zone', CL.blue),
-      move: arrow(6.2, 8, 7.8, 8, '+ pre-impl tests', { yAdjust: -11 })
+      move: arrow(6.25, 8, 7.75, 8, '', { })
     });
     cfgB.options.scales.x.title.text = 'Correctness assurance →';
     cfgB.options.scales.y.title.text = 'Maintainability & comprehension →';
-    new Chart(document.getElementById('scatterB'), cfgB);
+    charts.push(new Chart(document.getElementById('scatterB'), cfgB));
+
+    fitFrame();
+    setTimeout(fitFrame, 250);
+    window.addEventListener('resize', fitFrame);
+    watchTheme();
+  }
+
+  // Re-apply palette colors to already-built charts when the host theme changes.
+  function applyTheme() {
+    palette();
+    charts.forEach(function (ch) {
+      var o = ch.options, s = o.scales;
+      if (s.r) {
+        s.r.ticks.color = MUTED; s.r.grid.color = GRID;
+        s.r.angleLines.color = GRID; s.r.pointLabels.color = TEXT;
+      }
+      if (s.x) {
+        s.x.ticks.color = MUTED; s.x.grid.color = GRID; s.x.title.color = TEXT;
+        s.y.ticks.color = MUTED; s.y.grid.color = GRID; s.y.title.color = TEXT;
+      }
+      if (o.plugins.legend && o.plugins.legend.labels) o.plugins.legend.labels.color = TEXT;
+      if (o.plugins.datalabels) o.plugins.datalabels.color = TEXT;
+      ch.update('none');
+    });
+  }
+  function watchTheme() {
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(applyTheme);
+    }
+    try {
+      var pd = window.parent && window.parent !== window ? window.parent.document : null;
+      if (pd && window.MutationObserver) {
+        new MutationObserver(applyTheme).observe(pd.documentElement, {
+          attributes: true, attributeFilter: ['saved-theme', 'data-theme', 'class', 'style']
+        });
+      }
+    } catch (e) {}
   }
   boot();
 })();
