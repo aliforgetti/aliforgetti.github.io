@@ -1,0 +1,159 @@
+#!/usr/bin/env python3
+"""
+check - verifies the privacy boundary of the vault.
+
+    ./check
+
+Runs automatically before every publish (scripts/autopublish.sh).
+Run it by hand any time. It changes nothing - it only looks.
+
+It answers ONE question: could anything private leak?
+
+  1. Is anything in private/ marked to publish?
+  2. Does any published note link into private/?
+  3. Does the site config still exclude private/?
+  4. Is any private file tracked by git?
+
+If all four pass, nothing private can reach the website or GitHub.
+
+No dependencies. Plain Python. Read it top to bottom.
+"""
+
+import os
+import re
+import subprocess
+import sys
+
+# ---------------------------------------------------------------
+# where things are
+# ---------------------------------------------------------------
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+CONTENT = os.path.join(ROOT, "content")
+PRIVATE = os.path.join(CONTENT, "private")
+CONFIG = os.path.join(ROOT, "quartz.config.yaml")
+
+# Every problem found is (what is wrong, how to fix it).
+# The fix is not optional - an error you can't act on is a bug.
+problems = []
+
+
+# ---------------------------------------------------------------
+# small helpers
+# ---------------------------------------------------------------
+
+def all_notes(folder):
+    """Every .md file under a folder."""
+    found = []
+    for path, dirs, files in os.walk(folder):
+        dirs[:] = [d for d in dirs if d != ".obsidian"]
+        for name in files:
+            if name.endswith(".md"):
+                found.append(os.path.join(path, name))
+    return found
+
+
+def frontmatter(note):
+    """The text between the opening and closing --- lines. '' if none."""
+    text = open(note, encoding="utf-8", errors="replace").read()
+    match = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+    return match.group(1) if match else ""
+
+
+def is_published(note):
+    return re.search(r"^publish:\s*true\s*$", frontmatter(note), re.MULTILINE)
+
+
+def short(note):
+    """Path relative to the repo, for readable messages."""
+    return os.path.relpath(note, ROOT)
+
+
+# ---------------------------------------------------------------
+# test 1 - nothing in private/ is marked to publish
+# ---------------------------------------------------------------
+
+for note in all_notes(PRIVATE):
+    if is_published(note):
+        problems.append((
+            f"{short(note)} is inside private/ but has 'publish: true'",
+            "Change it to 'publish: false', or move the note out of private/ "
+            "if you actually meant to share it.",
+        ))
+
+
+# ---------------------------------------------------------------
+# test 2 - no published note links into private/
+# ---------------------------------------------------------------
+
+# Names of the private notes, e.g. "Training plan"
+private_names = {
+    os.path.splitext(os.path.basename(p))[0] for p in all_notes(PRIVATE)
+}
+
+for note in all_notes(CONTENT):
+    if note.startswith(PRIVATE) or not is_published(note):
+        continue
+    text = open(note, encoding="utf-8", errors="replace").read()
+    for link in re.findall(r"\[\[([^\]|#]+)", text):
+        target = link.strip()
+        name = target.split("/")[-1]
+        if "private/" in target or name in private_names:
+            problems.append((
+                f"{short(note)} is published and links to [[{target}]], "
+                f"which is a private note",
+                "Remove that link, or move the target note out of private/. "
+                "A published page must not point at private material.",
+            ))
+
+
+# ---------------------------------------------------------------
+# test 3 - the site config still excludes private/
+# ---------------------------------------------------------------
+
+config_text = open(CONFIG, encoding="utf-8", errors="replace").read()
+ignore_block = re.search(r"ignorePatterns:\s*\n((?:\s+-.*\n)+)", config_text)
+
+if not ignore_block or "private" not in ignore_block.group(1):
+    problems.append((
+        "quartz.config.yaml no longer excludes private/ from the site build",
+        "Add '- private' under 'ignorePatterns:' in quartz.config.yaml.",
+    ))
+
+
+# ---------------------------------------------------------------
+# test 4 - git is not tracking anything private
+# ---------------------------------------------------------------
+
+tracked = subprocess.run(
+    ["git", "ls-files", "content/private"],
+    cwd=ROOT, capture_output=True, text=True,
+).stdout.strip()
+
+if tracked:
+    first = tracked.splitlines()[0]
+    count = len(tracked.splitlines())
+    problems.append((
+        f"git is tracking {count} file(s) inside private/, starting with {first}",
+        "Run: git rm --cached -r content/private\n"
+        "     Then confirm '.gitignore' still contains the line 'private/'.",
+    ))
+
+
+# ---------------------------------------------------------------
+# report
+# ---------------------------------------------------------------
+
+if not problems:
+    print("check: all 4 privacy tests passed. Safe to publish.")
+    sys.exit(0)
+
+print(f"check: FAILED - {len(problems)} problem(s) found.\n")
+for i, (wrong, fix) in enumerate(problems, 1):
+    print(f"{i}. {wrong}")
+    for line in fix.split("\n"):
+        print(f"   fix: {line}" if line == fix.split("\n")[0] else f"        {line}")
+    print()
+
+print("Nothing was published. Fix the above, then run ./check again.")
+sys.exit(1)

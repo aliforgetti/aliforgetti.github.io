@@ -1,4 +1,5 @@
 .DS_Store
+.fuse_hidden*
 .gitignore
 node_modules
 public
