@@ -47,6 +47,13 @@ fi
 # 1. grab remote edits first (e.g. from the phone)
 git pull --rebase --autostash origin v5 >> "$LOG" 2>&1 || true
 
+# 1.5 sweep captured tasks from daily inboxes onto the board.
+#     failure here should not block publishing - log and go on.
+if ! ./sweep >> "$LOG" 2>&1; then
+  echo "$(ts) sweep failed - run ./sweep by hand to see why" >> "$LOG"
+  notify "Inbox sweep failed. Run ./sweep in Terminal."
+fi
+
 # 2. anything new to publish?
 if [ -z "$(git status --porcelain content/ quartz.config.yaml)" ]; then
   echo "$(ts) no changes, skip" >> "$LOG"

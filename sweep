@@ -1,0 +1,13 @@
+#!/bin/bash
+# sweep - finds node (nvm/conda hide it from launchd), then
+# runs the node adapter, which runs the ONE logic file:
+# content/templates/scripts/sweep_core.js
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+for d in "$HOME/.nvm/versions/node"/*/bin "$HOME/anaconda3/bin" "$HOME/miniconda3/bin"; do
+  [ -x "$d/node" ] && export PATH="$d:$PATH" && break
+done
+command -v node > /dev/null || {
+  echo "sweep: FAILED - node not found. Install node, or drag tasks by hand."
+  exit 1
+}
+exec node "$(dirname "$0")/sweep-node.cjs"
