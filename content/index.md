@@ -5,8 +5,9 @@ publish: true
 
 Compendiums of body, heart, and thought.
 
-- [[notes/index|Notes]] · thinking in progress
-- [[projects/index|Projects]] · things I have made
+- [[notes/index|Notes]] · things I've written down
+- [[threads/index|Threads]] · things I'm circling
+- [[projects/index|Projects]] · things I'm walking toward
 - [[library/index|Library]] · things I keep
 
 ---

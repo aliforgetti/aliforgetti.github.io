@@ -6,14 +6,11 @@ aliases:
   - writing
 ---
 
-Thinking in progress. Grown over time, not finished.
+Things I've written down. Essays, poems, lists — made things, more or
+less finished.
 
-## threads
+Some come out of a [[threads/index|thread]] and link back to it. Some
+don't. A note doesn't need a parent.
 
-Questions and ideas I'm circling. Things link to them; they collect.
-
-- [[notes/threads/index|All threads]]
-
-## clusters
-
-- [[notes/keeping-the-robots-honest/index|Keeping the robots honest]] - a running cluster on building software with AI: the ladder, harness engineering, and memory architecture
+A note that grows long enough becomes a folder with its own index —
+that's all a cluster is.

@@ -1,21 +1,19 @@
 ---
 title: "context & memory architecture for coding agents"
 date: 2026-07-28
-status: in-progress
+status: growing
 publish: true
 tags:
   - learning
   - ai
   - software-engineering
   - harness-engineering
-aliases:
-  - writing/keeping-the-robots-honest/agent-memory-architecture
 ---
 
 > [!note] Learning in progress
-> Part of [[notes/keeping-the-robots-honest/index|keeping the robots honest]]. A component of [[notes/keeping-the-robots-honest/harness-engineering|harness engineering]]. Bullet structure intentional.
+> Part of [[notes/the-harness/index|the harness]]. A component of [[notes/the-harness/harness-engineering|harness engineering]]. Bullet structure intentional.
 
-*The feed-forward + persistent-state component of [[notes/keeping-the-robots-honest/harness-engineering|harness engineering]].* Where the ladder asks **how formally you specify intent** (vibe → formal spec), this asks **how the agent stays grounded and remembers** across sessions - one component group of the harness, alongside its sensors and loop design.
+*The feed-forward + persistent-state component of [[notes/the-harness/harness-engineering|harness engineering]].* Where the ladder asks **how formally you specify intent** (vibe → formal spec), this asks **how the agent stays grounded and remembers** across sessions - one component group of the harness, alongside its sensors and loop design.
 
 No unified framework yet - better described as a **context and memory architecture**. Most of it is old practice renamed:
 

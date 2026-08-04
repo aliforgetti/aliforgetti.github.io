@@ -1,7 +1,7 @@
 ---
 title: the snow leopard
 author: Peter Matthiessen
-status: want to read
+status: want-to-read
 publish: true
 ---
 

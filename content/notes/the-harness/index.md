@@ -1,12 +1,11 @@
 ---
-title: "keeping the robots honest"
+title: the harness
+status: growing
 publish: true
 tags:
   - ai
   - software-engineering
   - harness-engineering
-aliases:
-  - writing/keeping-the-robots-honest
 ---
 
 Notes on building software with AI without going soft: how to delegate the work while keeping the thinking.
@@ -67,9 +66,9 @@ Under all of it, one question keeps you honest: are you keeping the thinking (in
 
 ## start here
 
-1. [[notes/keeping-the-robots-honest/harness-engineering|Harness engineering]] - the spine. Why we need it, and what each component (guides, sensors, loop) is for. Start here.
-2. [[notes/keeping-the-robots-honest/the-ladder|The ladder]] - the philosophies grouped by the component they plug into, the two scoring framings, and the hybrid. With interactive plots.
-3. [[notes/keeping-the-robots-honest/agent-memory-architecture|Context & memory architecture]] - a deep dive on the guides / feed-forward component.
+1. [[notes/the-harness/harness-engineering|Harness engineering]] - the spine. Why we need it, and what each component (guides, sensors, loop) is for. Start here.
+2. [[notes/the-harness/the-ladder|The ladder]] - the philosophies grouped by the component they plug into, the two scoring framings, and the hybrid. With interactive plots.
+3. [[notes/the-harness/agent-memory-architecture|Context & memory architecture]] - a deep dive on the guides / feed-forward component.
 
 ## the through-line
 

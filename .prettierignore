@@ -1,3 +1,7 @@
 public
 node_modules
 .quartz-cache
+
+# upstream Quartz — not mine, don't reformat
+docs
+quartz

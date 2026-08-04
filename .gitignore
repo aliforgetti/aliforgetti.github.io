@@ -1,18 +1,28 @@
+# macOS / filesystem junk
 .DS_Store
 .fuse_hidden*
-.gitignore
+
+# build output and deps
 node_modules
 public
 prof
 tsconfig.tsbuildinfo
-.obsidian
 .quartz-cache
-private/
-.replit
-replit.nix
 .quartz/
 quartz/cli/tui/dist/
+
+# never publish, never commit
+content/private/
+
+# obsidian workspace state (machine-specific)
+.obsidian
+
+# script logs
 scripts/autopublish.log
 scripts/autopublish.err
 scripts/backup.log
 scripts/backup.err
+
+# replit leftovers from the upstream template
+.replit
+replit.nix

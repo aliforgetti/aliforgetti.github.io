@@ -55,7 +55,7 @@ schedule is a dependency on *me*, and I'm the least reliable part.
 
 ```mermaid
 flowchart TD
-    A["You, in Obsidian<br/><i>write · tag · nothing else</i>"] --> B["content/<br/>notes · projects · library"]
+    A["You, in Obsidian<br/><i>write · tag · nothing else</i>"] --> B["content/<br/>notes · threads · projects · library"]
     B -.->|gitignored| P["private/<br/><b>never leaves this Mac</b>"]
     B --> C["scripts/autopublish.sh<br/><i>launchd · every 30 min</i>"]
     C --> D{"./check<br/><i>the privacy gate</i>"}
@@ -83,7 +83,7 @@ ask me for attention every week.
 | `scripts/autopublish.sh` | every 30 min: pull → check → push | `launchctl unload` the plist |
 | `scripts/backup-vault.sh` | weekly zip of `content/` to iCloud | `launchctl unload` the plist |
 | `VAULT.md` | this file | — |
-| `thread` skill | captures a thread, catches duplicates | delete the skill; use `templates/thread.md` |
+| `thread` skill | captures a thread, catches duplicates | delete it; use `templates/thread.md` |
 
 **No pre-commit hooks.** They fail mysteriously, don't survive a fresh
 clone, and break rule 2. `autopublish` catches the same problems every
@@ -117,17 +117,19 @@ Run it by hand any time: `./check`
 
 ## The rooms
 
-- `notes/` — my thinking
-  - `notes/threads/` — questions and ideas I'm circling
-- `projects/` — my endeavors (hub notes linking across rooms)
-- `library/` — others' work I keep, marginalia inline
-- `private/` — gitignored, never leaves this machine
+| Room | Holds | One word |
+|---|---|---|
+| `notes/` | essays, poems, lists — made things | **telling** |
+| `threads/` | questions and ideas I'm circling | **asking** |
+| `projects/` | endeavours that end | **doing** |
+| `library/` | others' work I keep | **keeping** |
+| `private/` | gitignored, never leaves this Mac | — |
+
+> **The test: am I asking, or telling?**
+> Asking → `threads/`. Telling → `notes/`.
 
 **Folders answer "what kind of thing." Frontmatter answers "what state."**
 Never move a note to change its status — change the field.
-
-*(`writing/` was renamed to `notes/`. Old URLs still work — every moved
-note carries a `writing/...` alias.)*
 
 ---
 
@@ -140,7 +142,18 @@ Required on every note outside `templates/`:
 
 Optional: `date` (YYYY-MM-DD) · `tags` · `aliases` · `status`
 
-*(Not yet enforced by `check` — added when it causes a real problem.)*
+`status` vocabulary, by room:
+
+| Room | Values |
+|---|---|
+| `threads/` · `notes/` | `seed` · `growing` · `evergreen` |
+| `projects/` | `planned` · `active` · `done` · `shelved` |
+| `library/books/` | `want-to-read` · `reading` · `read` |
+
+No `type:` field — the folder already says what a thing is. No `draft:`
+— there is one publish flag, and it's `publish:`.
+
+*(Not enforced by `check` yet. Added when it causes a real problem.)*
 
 ---
 
@@ -155,15 +168,31 @@ time. Not an essay — a container. One object, three flavours:
 
 **Rules:**
 
-- Live in `notes/threads/`, one flat folder
-- `publish: false` always, unless I explicitly say otherwise
+- Live in `threads/`, flat. One room, one word, one concept
+- `publish: false` by default, unless I say otherwise
 - Title = a short linkable handle. Body = my words, unedited
 - **Never add a list of links to a thread.** Things link *to* it, and
   the backlinks panel assembles the page. Zero upkeep — that's rule 3
 
+**A cluster is just a note that grew children.** When a note needs
+long-form pieces under it, it becomes a folder with an `index.md` —
+like `notes/the-harness/`. Nothing new to learn; it's still a note.
+
 Capture one by asking Claude (the `thread` skill), or from the Obsidian
 template `templates/thread.md`. The skill exists for one reason a
 template can't cover: noticing the thread already exists.
+
+### How notes and threads relate
+
+**Optional and many-to-many.** A note *may* point at a thread — usually
+does, since it came out of one. It may point at several. It may point
+at none.
+
+**No note ever needs a parent thread.** A poem that arrived from
+nowhere is just a note.
+
+The thread is the one that collects: things link *to* it, and its
+backlinks panel assembles the page. Never maintain a list by hand.
 
 ### Thread vs tag vs project
 

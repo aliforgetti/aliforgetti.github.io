@@ -1,21 +1,19 @@
 ---
 title: "ai-assisted development frameworks: the ladder"
 date: 2026-07-28
-status: in-progress
+status: growing
 publish: true
 tags:
   - learning
   - ai
   - software-engineering
   - harness-engineering
-aliases:
-  - writing/keeping-the-robots-honest/the-ladder
 ---
 
 > [!note] Learning in progress
-> Part of [[notes/keeping-the-robots-honest/index|keeping the robots honest]]. Working notes, bullet structure intentional.
+> Part of [[notes/the-harness/index|the harness]]. Working notes, bullet structure intentional.
 >
-> The cleaner frame: this reads as a ladder, but each philosophy is really a bet on one [[notes/keeping-the-robots-honest/harness-engineering|harness]] component - guides, sensors, or loop. See the [[notes/keeping-the-robots-honest/index|map]]. The rung-by-rung detail below is the same set, laid out as a spectrum.
+> The cleaner frame: this reads as a ladder, but each philosophy is really a bet on one [[notes/the-harness/harness-engineering|harness]] component - guides, sensors, or loop. See the [[notes/the-harness/index|map]]. The rung-by-rung detail below is the same set, laid out as a spectrum.
 
 *Research digest, July 2026. No single standard exists yet. Frameworks below are ordered by increasing structure and decreasing human implementation control.*
 
@@ -31,7 +29,7 @@ aliases:
 
 ## grouped by harness component
 
-Each philosophy mainly feeds one part of the [[notes/keeping-the-robots-honest/harness-engineering|harness]]:
+Each philosophy mainly feeds one part of the [[notes/the-harness/harness-engineering|harness]]:
 
 - **Guides (feed-forward):** pseudocode, SPDD, spec-driven, memory / rules, and the spec half of formal
 - **Sensors (feedback):** test/contract-driven, evals, the proof half of formal
@@ -121,7 +119,7 @@ The hybrid this digest lands on spans two components: pseudocode + light spec (g
   - [OpenAI, "Harness engineering" with Codex](https://openai.com/index/harness-engineering/) - real harness: custom linters, structural tests, observability, cleanup agents
   - [SWE-bench](https://github.com/SWE-bench/SWE-bench) - containerized eval harness that runs agents against real GitHub issues
   - [OpenAI Codex CLI (repo)](https://github.com/openai/codex) - open-source terminal coding agent the article builds on
-- **Deep dive:** [[notes/keeping-the-robots-honest/harness-engineering|harness engineering]] - components, other approaches, and open problems. Its context/state layer has its own note: [[notes/keeping-the-robots-honest/agent-memory-architecture|context & memory architecture]]
+- **Deep dive:** [[notes/the-harness/harness-engineering|harness engineering]] - components, other approaches, and open problems. Its context/state layer has its own note: [[notes/the-harness/agent-memory-architecture|context & memory architecture]]
 
 ## 8. Human on the loop
 
@@ -191,7 +189,7 @@ The hybrid this digest lands on spans two components: pseudocode + light spec (g
 
 The three views below are interactive. In the radar, toggle any framework on or off to compare shapes. The **proposed hybrid** (violet, dashed) - pseudocode + acceptance tests + light spec - is plotted on all three as the target.
 
-<iframe src="/ai-dev-frameworks-plots.html" title="Interactive framework plots: radar and two scatter views" width="100%" height="1620" style="border:0; border-radius:14px; overflow:hidden;" loading="lazy"></iframe>
+<iframe src="/notes/the-harness/ai-dev-frameworks-plots.html" title="Interactive framework plots: radar and two scatter views" width="100%" height="1620" style="border:0; border-radius:14px; overflow:hidden;" loading="lazy"></iframe>
 
 ### Framing A: process axes
 

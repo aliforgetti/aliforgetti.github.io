@@ -2,7 +2,7 @@
 title: tumanguya
 date: 2026-09-15
 status: active
-publish: false
+publish: true
 tags:
   - mountains
 aliases:
@@ -32,7 +32,7 @@ One book for each relationship the mountain will test.
 
 Questions this project is pulling on. They'll outlive it.
 
-- [[notes/threads/goals-as-directions|goals as directions, not destinations]]
+- [[threads/goals-as-directions|goals as directions, not destinations]]
 
 ## training
 

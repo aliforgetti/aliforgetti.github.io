@@ -1,7 +1,7 @@
 ---
 title: touching the void
 author: Joe Simpson
-status: want to read
+status: want-to-read
 publish: true
 ---
 

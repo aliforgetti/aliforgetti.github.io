@@ -1,24 +1,26 @@
 ---
 title: {{title}}
 date: {{date}}
-tags:
-  # lenses: inference, art, ... (only if
-  # the thread crosses rooms)
-link: https://
-status: building
+status: planned
 publish: false
+tags:
 ---
+
+<!-- status: planned | active | done | shelved -->
 
 One line: what it is.
 
-## What it is
+## what it is
 
 - point
 
-## Made with
+## threads
 
-- tool, medium, or practice
+<!-- questions this project is pulling on.
+     they live in threads/ and outlive this. -->
 
-## Links
+-
+
+## links
 
 - [Where it lives](https://)

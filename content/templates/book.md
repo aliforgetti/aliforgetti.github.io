@@ -1,8 +1,16 @@
 ---
 title: {{title}}
 author:
-status: reading
-publish: true
+status: want-to-read
+publish: false
 ---
 
-<!-- notes as you read -->
+<!-- status: want-to-read | reading | read -->
+
+![cover|120](https://covers.openlibrary.org/b/isbn/ISBN-L.jpg)
+
+<!-- one or two lines: what it is -->
+
+## notes
+
+<!-- notes as you read. quotes, thoughts, anything -->

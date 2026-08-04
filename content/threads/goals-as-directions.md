@@ -1,6 +1,5 @@
 ---
 title: goals as directions, not destinations
-type: thread
 status: seed
 publish: true
 tags:
