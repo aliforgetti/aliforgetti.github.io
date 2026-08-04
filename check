@@ -13,8 +13,9 @@ It answers ONE question: could anything private leak?
   2. Does any published note link into private/?
   3. Does the site config still exclude private/?
   4. Is any private file tracked by git?
+  5. Is .obsidian/ tracked by git? (holds the calendar secret URL)
 
-If all four pass, nothing private can reach the website or GitHub.
+If all five pass, nothing private can reach the website or GitHub.
 
 No dependencies. Plain Python. Read it top to bottom.
 """
@@ -91,6 +92,15 @@ private_names = {
     os.path.splitext(os.path.basename(p))[0] for p in all_notes(PRIVATE)
 }
 
+# Names that ALSO exist as public notes (e.g. "index") are
+# ambiguous - a bare [[index]] link resolves to the public one,
+# so flagging it would be a false alarm.
+public_names = {
+    os.path.splitext(os.path.basename(p))[0]
+    for p in all_notes(CONTENT) if not p.startswith(PRIVATE)
+}
+private_only_names = private_names - public_names
+
 for note in all_notes(CONTENT):
     if note.startswith(PRIVATE) or not is_published(note):
         continue
@@ -98,7 +108,7 @@ for note in all_notes(CONTENT):
     for link in re.findall(r"\[\[([^\]|#]+)", text):
         target = link.strip()
         name = target.split("/")[-1]
-        if "private/" in target or name in private_names:
+        if "private/" in target or name in private_only_names:
             problems.append((
                 f"{short(note)} is published and links to [[{target}]], "
                 f"which is a private note",
@@ -141,11 +151,33 @@ if tracked:
 
 
 # ---------------------------------------------------------------
+# test 5 - git is not tracking .obsidian (holds the calendar
+# secret URL since the ICS plugin was added, 2026-08)
+# ---------------------------------------------------------------
+
+tracked = subprocess.run(
+    ["git", "ls-files", "content/.obsidian"],
+    cwd=ROOT, capture_output=True, text=True,
+).stdout.strip()
+
+if tracked:
+    count = len(tracked.splitlines())
+    problems.append((
+        f"git is tracking {count} file(s) inside content/.obsidian/ - "
+        "plugin settings there include the secret calendar URL",
+        "Run: git rm --cached -r content/.obsidian\n"
+        "     Then confirm '.gitignore' still contains the line '.obsidian'.\n"
+        "     If this was ever pushed, regenerate the secret address in\n"
+        "     Google Calendar (Settings > Integrate calendar > Reset).",
+    ))
+
+
+# ---------------------------------------------------------------
 # report
 # ---------------------------------------------------------------
 
 if not problems:
-    print("check: all 4 privacy tests passed. Safe to publish.")
+    print("check: all 5 privacy tests passed. Safe to publish.")
     sys.exit(0)
 
 print(f"check: FAILED - {len(problems)} problem(s) found.\n")

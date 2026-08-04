@@ -10,23 +10,14 @@ Prefix: `{{title}}`
 
 ## open
 
-<!--
-items belonging to this stream that aren't on the board yet.
-one line each, prefixed.
-
-MOVE them to board.md when you pull them - don't copy.
-an item is on the board OR here, never both.
--->
-
-## waiting
-
-<!-- open loops on this stream. dated. -->
+<!-- tasks live HERE and never move. state = a tag on the line:
+     #soon / #next / #now / #waiting · done = check it off.
+     working notes go indented under the task line - they
+     render on the board and stay behind as the log. -->
 
 ## context
 
 <!--
-the part that actually earns this page.
-
 what I already tried and ruled out. why it's shaped this
 way. links, dashboards, PRs, who asked for what.
 
