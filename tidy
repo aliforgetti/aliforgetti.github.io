@@ -42,7 +42,7 @@ today = datetime.date.today().isoformat()
 
 OPEN_TASK = re.compile(r"\s*- \[ \] ")
 DONE_TASK = re.compile(r"\s*- \[x\] ", re.IGNORECASE)
-STATE_TAG = re.compile(r"[ \t]*#(now|soon|waiting)(?![\w/])")
+STATE_TAG = re.compile(r"[ \t]*#(now|soon|waiting|focus)(?![\w/])")
 PREFIX_OF = re.compile(r"^\s*- \[[ xX]\] (\S+( \S+){0,3}) [—–-] \S")
 
 
