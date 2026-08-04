@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+"""
+tidy - the janitor. Files horizon tasks; logs finished ones.
+
+    ./tidy
+
+Runs inside autopublish (every 30 min). Run by hand any time.
+Append-only into streams; it only relocates lines, and only
+these two kinds:
+
+  1. FILE:  an unchecked, PREFIXED, UNTAGGED task in a daily
+     note's ## inbox  ->  its stream's ## open
+     ("Push AE — someday refactor X" = on the horizon, not
+      on the board. Tagged tasks stay put - the board is a
+      query and sees them anywhere.)
+
+  2. LOG:  a checked [x] PREFIXED task anywhere in daily
+     notes, backlog.md, or a stream's ## open
+     ->  the stream's ## log, dated, newest first.
+
+A prefix maps to a stream via the "Prefix: `X`" line each
+stream page declares. Unknown prefix = the line stays put.
+
+Never touched: future dailies, unprefixed lines (checklists!),
+bullets, ## log sections, comments, someday.md, board.md.
+
+No dependencies. Plain Python. Read it top to bottom.
+"""
+
+import datetime
+import glob
+import os
+import re
+import sys
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+PRIV = os.path.join(ROOT, "content", "private")
+DAILY = os.path.join(PRIV, "daily")
+STREAMS = os.path.join(PRIV, "streams")
+
+today = datetime.date.today().isoformat()
+
+OPEN_TASK = re.compile(r"\s*- \[ \] ")
+DONE_TASK = re.compile(r"\s*- \[x\] ", re.IGNORECASE)
+STATE_TAG = re.compile(r"[ \t]*#(now|soon|waiting)(?![\w/])")
+PREFIX_OF = re.compile(r"^\s*- \[[ xX]\] (\S+( \S+){0,3}) [—–-] \S")
+
+
+def fail(msg):
+    print(f"tidy: FAILED - {msg}\nNothing was changed.")
+    sys.exit(1)
+
+
+# ---------------------------------------------------------------
+# build prefix -> stream file map from "Prefix: `X`" lines
+# ---------------------------------------------------------------
+
+prefix_map = {}
+for path in sorted(glob.glob(os.path.join(STREAMS, "**", "*.md"), recursive=True)):
+    for line in open(path, encoding="utf-8").read().split("\n"):
+        m = re.match(r"^Prefix:\s*`([^`]+)`", line)
+        if m and m.group(1) not in prefix_map:
+            prefix_map[m.group(1)] = path
+
+if not prefix_map:
+    fail("no stream declares a 'Prefix: `X`' line - nothing to map to")
+
+
+def stream_for(line):
+    m = PREFIX_OF.match(line)
+    return prefix_map.get(m.group(1)) if m else None
+
+
+def section_bounds(lines, heading):
+    """(start, end) of a ## section's body; creates nothing."""
+    start = None
+    for i, l in enumerate(lines):
+        if start is None and l.strip() == heading:
+            start = i + 1
+        elif start is not None and l.startswith("## "):
+            return start, i
+    return (start, len(lines)) if start is not None else (None, None)
+
+
+def ensure_section(path, heading, after):
+    """Make sure `heading` exists in the file; insert after the
+    `after` section (or at end). Returns fresh lines."""
+    lines = open(path, encoding="utf-8").read().split("\n")
+    if any(l.strip() == heading for l in lines):
+        return lines
+    s, e = section_bounds(lines, after)
+    at = e if s is not None else len(lines)
+    lines[at:at] = [heading, ""]
+    return lines
+
+
+def append_to_section(path, heading, after, new_lines, top=False):
+    lines = ensure_section(path, heading, after)
+    s, e = section_bounds(lines, heading)
+    at = s + (1 if top and s < e and not lines[s].strip() else 0) if top else e
+    if top:
+        lines[at:at] = new_lines
+    else:
+        while e > s and not lines[e - 1].strip():
+            e -= 1
+        lines[e:e] = new_lines
+    open(path, "w", encoding="utf-8").write("\n".join(lines).rstrip("\n") + "\n")
+
+
+filed, logged = [], []
+
+
+def extract(path, lines, start, end, want, guard):
+    """Remove matching blocks from lines[start:end]; return them.
+    want(line) decides; guard skips comment regions."""
+    keep, taken, i, in_c = [], [], start, False
+    while i < end:
+        line = lines[i]
+        if "<!--" in line: in_c = True
+        if "-->" in line:
+            in_c = False; keep.append(line); i += 1; continue
+        if not in_c and want(line):
+            block = [line]; i += 1
+            while i < end and lines[i].strip() and lines[i].startswith(("\t", "    ")):
+                block.append(lines[i]); i += 1
+            taken.append(block)
+        else:
+            keep.append(line); i += 1
+    return keep, taken
+
+
+# ---------------------------------------------------------------
+# pass 1: daily notes - file horizon tasks, log finished ones
+# ---------------------------------------------------------------
+
+for name in sorted(os.listdir(DAILY)):
+    if not name.endswith(".md") or name[:-3] > today:
+        continue
+    path = os.path.join(DAILY, name)
+    lines = open(path, encoding="utf-8").read().split("\n")
+    changed = False
+
+    # 1a. inbox: unchecked + prefixed + untagged -> stream ## open
+    s, e = section_bounds(lines, "## inbox")
+    if s is not None:
+        keep, taken = extract(path, lines, s, e, lambda l: (
+            OPEN_TASK.match(l) and not STATE_TAG.search(l) and stream_for(l)), None)
+        real = [b for b in taken if stream_for(b[0])]
+        if real:
+            lines = lines[:s] + keep + lines[e:]
+            changed = True
+            for b in real:
+                append_to_section(stream_for(b[0]), "## open", "## log", b)
+                filed.append((b[0].strip(), name))
+
+    # 1b. anywhere in the note: done + prefixed -> stream ## log
+    keep, taken = extract(path, lines, 0, len(lines), lambda l: (
+        DONE_TASK.match(l) and stream_for(l)), None)
+    if taken:
+        lines = keep
+        changed = True
+        for b in taken:
+            entry = STATE_TAG.sub("", b[0]).strip()
+            entry = re.sub(r"^- \[[xX]\] ", f"- [x] {today} · ", entry)
+            append_to_section(stream_for(b[0]), "## log", "## open",
+                              [entry] + b[1:], top=True)
+            logged.append((entry, name))
+
+    if changed:
+        open(path, "w", encoding="utf-8").write("\n".join(lines).rstrip("\n") + "\n")
+
+# ---------------------------------------------------------------
+# pass 2: backlog.md + stream ## open - log finished tasks
+# ---------------------------------------------------------------
+
+targets = [os.path.join(PRIV, "backlog.md")] + sorted(
+    glob.glob(os.path.join(STREAMS, "**", "*.md"), recursive=True))
+
+for path in targets:
+    if not os.path.isfile(path):
+        continue
+    lines = open(path, encoding="utf-8").read().split("\n")
+    # never rummage inside ## log itself
+    ls, le = section_bounds(lines, "## log")
+    lo = range(ls, le) if ls is not None else range(0)
+
+    keep, taken, i, in_c = [], [], 0, False
+    while i < len(lines):
+        line = lines[i]
+        if "<!--" in line: in_c = True
+        if "-->" in line:
+            in_c = False; keep.append(line); i += 1; continue
+        if (not in_c and i not in lo and DONE_TASK.match(line)
+                and stream_for(line) and not re.match(r"- \[x\] \d{4}-", line.strip())):
+            block = [line]; i += 1
+            while i < len(lines) and lines[i].strip() and lines[i].startswith(("\t", "    ")):
+                block.append(lines[i]); i += 1
+            taken.append(block)
+        else:
+            keep.append(line); i += 1
+
+    if not taken:
+        continue
+    open(path, "w", encoding="utf-8").write("\n".join(keep))
+    for b in taken:
+        entry = STATE_TAG.sub("", b[0]).strip()
+        entry = re.sub(r"^- \[[xX]\] ", f"- [x] {today} · ", entry)
+        append_to_section(stream_for(b[0]), "## log", "## open",
+                          [entry] + b[1:], top=True)
+        logged.append((entry, os.path.relpath(path, PRIV)))
+
+# ---------------------------------------------------------------
+# report
+# ---------------------------------------------------------------
+
+if not filed and not logged:
+    print("tidy: nothing to do.")
+    sys.exit(0)
+
+print(f"tidy: filed {len(filed)}, logged {len(logged)}")
+for t, src in filed:
+    print(f"  open - {t}   (from {src})")
+for t, src in logged:
+    print(f"  log  - {t}   (from {src})")

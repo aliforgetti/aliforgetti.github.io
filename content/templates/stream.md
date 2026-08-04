@@ -8,11 +8,20 @@ Prefix: `{{title}}`
 
 <!-- status: active | paused | done -->
 
-<!-- pure context - tasks live on the board as cards
-     carrying this prefix. this page holds what a card
-     can't: what I tried, what I ruled out, who asked
-     for what, links, dashboards.
+## open
 
-     after two weeks away this beats any task list. -->
+<!-- this stream's horizon. tasks live here (or in a daily
+     note - tidy files prefixed inbox captures to here).
+     tag a line #soon / #now / #waiting to put it on the
+     board - the board is a query, so the line never moves. -->
+
+## log
+
+<!-- what got done, newest first. tidy appends completed
+     prefixed tasks here automatically, dated. don't edit. -->
 
 ## context
+
+<!-- what I tried, what I ruled out, who asked for what,
+     links, dashboards. after two weeks away this beats
+     any task list. -->
