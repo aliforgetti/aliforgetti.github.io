@@ -82,7 +82,8 @@ ask me for attention every week.
 | `check` | one script. The privacy gate | just don't run it |
 | `scripts/autopublish.sh` | every 30 min: pull → check → push | `launchctl unload` the plist |
 | `scripts/backup-vault.sh` | weekly zip of `content/` to iCloud | `launchctl unload` the plist |
-| `VAULT.md` | this file | — |
+| `VAULT.md` | this file — what the system is | — |
+| `DECISIONS.md` | why it is that way, and what was rejected | — |
 | `thread` skill | captures a thread, catches duplicates | delete it; use `templates/thread.md` |
 
 **No pre-commit hooks.** They fail mysteriously, don't survive a fresh
@@ -261,6 +262,22 @@ Revisit only when a real problem makes the case.
 - ❌ Frontmatter + link checks — more failure modes than I'd read (rule 2)
 - ❌ `WORKLOG.md` — git plus `private/inbox` already cover it
 - ❌ Memory DB / MCP memory server — repo Markdown + git first
+
+---
+
+## Phone
+
+Obsidian Sync carries the whole vault to mobile. **The phone captures;
+the desktop processes.**
+
+- Capture a thought into `private/inbox` on the phone. Offline, instant,
+  no Claude required
+- Claude on mobile has **no vault access** — it can still draft a thread
+  for you to paste, it just can't check for duplicates
+- The Mac stays the only thing that publishes, so `./check` still gates
+  everything
+
+See `DECISIONS.md` for why the tunnelled-MCP option was declined.
 
 ---
 
