@@ -14,8 +14,9 @@ Run any future change against these. If it fails one, don't build it.
 > Nothing exists here that I can't read and explain.
 
 **Test:** *can I explain this part in 5 minutes?*
+If no — simplify it or delete it.
 
-I don't have to write it. But it has to be written to be read — boring
+I don't have to write it. But it has to be written to be *read*: boring
 tools, obvious code, no cleverness.
 
 ### 2. I can fix it
@@ -29,11 +30,24 @@ Corollary — **fail loud, but rarely.** Silent failure means I won't
 notice for weeks. Too many alerts means I stop reading them. Few
 possible failures, each one obvious.
 
-### 3. It doesn't ask me for anything
+### 3. Nothing is required that I don't control
 
-> No chores. No rituals. No scheduled attention — mine or an LLM's.
+> The system must keep working with no LLM, no network, and no
+> attention from me.
 
-**Test:** *does this put a to-do on my list?* If yes, it doesn't ship.
+**Test:** *if this disappeared tomorrow, would the vault still publish?*
+
+- **Yes** → it's a *convenience*. Allowed, and welcome.
+- **No** → it's a *dependency*. It must be local, deterministic, and
+  on the parts table.
+
+This rule is about **dependencies, not conveniences.** Claude skills,
+agents, and one-off help are conveniences — optional accelerators that
+obligate me to nothing. Using them freely is fine. What's not fine is
+the vault needing one to publish a note.
+
+It also rules out chores: anything that demands my attention on a
+schedule is a dependency on *me*, and I'm the least reliable part.
 
 ---
 
@@ -58,7 +72,9 @@ flowchart TD
 
 ## The parts
 
-Anything not on this list should not exist.
+Anything not on this list should not exist. Adding a row is the moment
+to ask whether it earns its keep — especially whether it will quietly
+ask me for attention every week.
 
 | Part | What it does | Off switch |
 |---|---|---|
@@ -67,6 +83,7 @@ Anything not on this list should not exist.
 | `scripts/autopublish.sh` | every 30 min: pull → check → push | `launchctl unload` the plist |
 | `scripts/backup-vault.sh` | weekly zip of `content/` to iCloud | `launchctl unload` the plist |
 | `VAULT.md` | this file | — |
+| `thread` skill | captures a thread, catches duplicates | delete the skill; use `templates/thread.md` |
 
 **No pre-commit hooks.** They fail mysteriously, don't survive a fresh
 clone, and break rule 2. `autopublish` catches the same problems every
@@ -100,13 +117,17 @@ Run it by hand any time: `./check`
 
 ## The rooms
 
-- `notes/` — my thinking *(currently still named `writing/`)*
+- `notes/` — my thinking
+  - `notes/threads/` — questions and ideas I'm circling
 - `projects/` — my endeavors (hub notes linking across rooms)
 - `library/` — others' work I keep, marginalia inline
 - `private/` — gitignored, never leaves this machine
 
 **Folders answer "what kind of thing." Frontmatter answers "what state."**
 Never move a note to change its status — change the field.
+
+*(`writing/` was renamed to `notes/`. Old URLs still work — every moved
+note carries a `writing/...` alias.)*
 
 ---
 
@@ -123,26 +144,65 @@ Optional: `date` (YYYY-MM-DD) · `tags` · `aliases` · `status`
 
 ---
 
-## Ideas and concepts
+## Threads
 
-**Tags only.** Tag as you write (`#context-rot`). Quartz builds a page
-per tag automatically. No files, no decisions, no upkeep.
+A **thread** is something I'm circling that collects material over
+time. Not an essay — a container. One object, three flavours:
 
-Not extracting concepts into their own notes yet. Revisit when a tag
-page gets crowded enough to stop being useful — that's evidence, and
-evidence is when you build.
+- a concept — *goals as directions, not destinations*
+- a question — *why do people climb mountains?*
+- a research topic — *decision trees in medicine*
+
+**Rules:**
+
+- Live in `notes/threads/`, one flat folder
+- `publish: false` always, unless I explicitly say otherwise
+- Title = a short linkable handle. Body = my words, unedited
+- **Never add a list of links to a thread.** Things link *to* it, and
+  the backlinks panel assembles the page. Zero upkeep — that's rule 3
+
+Capture one by asking Claude (the `thread` skill), or from the Obsidian
+template `templates/thread.md`. The skill exists for one reason a
+template can't cover: noticing the thread already exists.
+
+### Thread vs tag vs project
+
+| | What it is | Test |
+|---|---|---|
+| **tag** | a label, no content of its own | can I write a sentence that *is* it? no → tag |
+| **thread** | a note holding an idea | yes → thread |
+| **project** | an endeavour that ends | does it finish? yes → project |
+
+A thread is tagged. A project links to threads. Threads never live
+inside `projects/`.
+
+> Earlier this vault used **tags only** for ideas. Superseded: a tag
+> page is a generated list and can't hold my phrasing of the thought.
+> Tags stay for *topics*; threads took over *ideas*.
 
 ---
 
-## When to call an LLM
+## LLMs, skills, and agents
 
-**Allowed:** architecture decisions · one-off migrations · writing help
+The test is **dependency vs convenience** (rule 3), not frequency.
 
-**Not allowed:** routine operation · anything on a schedule · fixing
-things `check` should have explained
+**Fine — use freely:**
 
-> If I had to ask an LLM to fix something the system should have
-> explained, that's a bug in the system. Fix the error message.
+- Skills and agents that speed up things I could do by hand
+- Architecture decisions, one-off migrations, writing help
+- Anything where the fallback is "do it manually"
+
+**Not fine:**
+
+- The vault *needing* an LLM to publish, check, or back up
+- Anything on a schedule that creates a to-do for me
+- Asking an LLM to fix something `check` should have explained
+  — that's a bug in the system. Fix the error message instead.
+
+Skills live in `.claude/skills/` as plain Markdown: version-controlled,
+readable, deletable. They pass rule 1 easily. If one breaks, I do the
+thing by hand and nothing else is affected — that's rule 2 satisfied by
+construction.
 
 ---
 
@@ -160,13 +220,15 @@ things `check` should have explained
 
 ## Deliberately not built
 
-Each of these failed one of the three rules. Revisit only when a real
-problem makes the case.
+Each of these failed a rule, or would have needed regular attention.
+Revisit only when a real problem makes the case.
 
 - ❌ PARA / Zettelkasten — folders-as-state; every move breaks links
 - ❌ `drafts/` or `archive/` folders — `status:` does this without moving files
 - ❌ Pre-commit hooks — opaque when they fail (rule 2)
-- ❌ Skills / agents in the loop — LLM dependency in routine operation (rule 3)
+- ✅ Skills / agents — allowed under rule 3 as *conveniences*. `thread`
+  is the first. If it vanished, `templates/thread.md` still works —
+  that's the test any future skill must pass.
 - ❌ Frontmatter + link checks — more failure modes than I'd read (rule 2)
 - ❌ `WORKLOG.md` — git plus `private/inbox` already cover it
 - ❌ Memory DB / MCP memory server — repo Markdown + git first

@@ -9,7 +9,7 @@ publish: true
 
 Siula Grande, 1985. A broken leg, a cut rope, and
 three days crawling back alone. Reading for
-[[books for whitney|whitney]].
+[[notes/books-for-tumanguya|tumanguya]].
 
 ## notes
 

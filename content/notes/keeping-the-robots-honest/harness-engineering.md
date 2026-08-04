@@ -8,10 +8,12 @@ tags:
   - ai
   - software-engineering
   - harness-engineering
+aliases:
+  - writing/keeping-the-robots-honest/harness-engineering
 ---
 
 > [!note] Learning in progress
-> Part of [[writing/keeping-the-robots-honest/index|keeping the robots honest]]. The spine of the cluster: every philosophy plugs into one of its components. Bullet structure intentional.
+> Part of [[notes/keeping-the-robots-honest/index|keeping the robots honest]]. The spine of the cluster: every philosophy plugs into one of its components. Bullet structure intentional.
 
 *Engineer the environment, not the prompt.* A **harness** is the controlled environment an agent runs in: **guides** (feed-forward), **sensors** (feedback), and a **loop** (orchestration) that ties them together. Everything else in this cluster is a bet on one of those three.
 
@@ -33,7 +35,7 @@ Vibe coding bets on none of these (just eyeball the output). Formal spec bets on
 **Purpose: prevention.** Give the agent intent, conventions, architecture, examples, and memory so it does not have to guess. Lowers the error rate before it writes a line.
 
 - **Plugs in here:** pseudocode, light spec, SPDD, spec-driven, rules files, and the *spec* half of formal spec
-- **Deep dive:** [[writing/keeping-the-robots-honest/agent-memory-architecture|context & memory architecture]] is the persistent-state slice of guides (CLAUDE.md, specs, ADRs, worklogs)
+- **Deep dive:** [[notes/keeping-the-robots-honest/agent-memory-architecture|context & memory architecture]] is the persistent-state slice of guides (CLAUDE.md, specs, ADRs, worklogs)
 - The discipline of choosing *what* to feed and *when* is [context engineering](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html); the failure mode is a bloated guide that rots and crowds out the task
 
 ### Sensors · feedback

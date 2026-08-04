@@ -1,11 +1,16 @@
 ---
-title: books for whitney
+title: books for tumanguya
 tags:
   - books
+  - mountains
 publish: true
+aliases:
+  - writing/books for whitney
+  - notes/books for whitney
+  - books for whitney
 ---
 
-On September 15th I attempt Mount Whitney. These are the books I'm reading before I go, one for **each relationship the mountain will test**:
+On September 15th I attempt [[projects/tumanguya|Tumanguya]] (Mount Whitney). These are the books I'm reading before I go, one for **each relationship the mountain will test**:
 - with the mountain
 - with myself
 - with suffering itself
@@ -30,7 +35,8 @@ On September 15th I attempt Mount Whitney. These are the books I'm reading befor
 
 ---
 
-See also: my running [[library/books/index|book list]].
+See also: my running [[library/books/index|book list]] · the thread this
+keeps circling back to, [[notes/threads/goals-as-directions|goals as directions, not destinations]].
 
 <!-- when the whys arrive, add a column or a line
 under each table: why it's in the pack -->

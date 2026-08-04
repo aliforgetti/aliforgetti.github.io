@@ -8,12 +8,14 @@ tags:
   - ai
   - software-engineering
   - harness-engineering
+aliases:
+  - writing/keeping-the-robots-honest/the-ladder
 ---
 
 > [!note] Learning in progress
-> Part of [[writing/keeping-the-robots-honest/index|keeping the robots honest]]. Working notes, bullet structure intentional.
+> Part of [[notes/keeping-the-robots-honest/index|keeping the robots honest]]. Working notes, bullet structure intentional.
 >
-> The cleaner frame: this reads as a ladder, but each philosophy is really a bet on one [[writing/keeping-the-robots-honest/harness-engineering|harness]] component - guides, sensors, or loop. See the [[writing/keeping-the-robots-honest/index|map]]. The rung-by-rung detail below is the same set, laid out as a spectrum.
+> The cleaner frame: this reads as a ladder, but each philosophy is really a bet on one [[notes/keeping-the-robots-honest/harness-engineering|harness]] component - guides, sensors, or loop. See the [[notes/keeping-the-robots-honest/index|map]]. The rung-by-rung detail below is the same set, laid out as a spectrum.
 
 *Research digest, July 2026. No single standard exists yet. Frameworks below are ordered by increasing structure and decreasing human implementation control.*
 
@@ -29,7 +31,7 @@ tags:
 
 ## grouped by harness component
 
-Each philosophy mainly feeds one part of the [[writing/keeping-the-robots-honest/harness-engineering|harness]]:
+Each philosophy mainly feeds one part of the [[notes/keeping-the-robots-honest/harness-engineering|harness]]:
 
 - **Guides (feed-forward):** pseudocode, SPDD, spec-driven, memory / rules, and the spec half of formal
 - **Sensors (feedback):** test/contract-driven, evals, the proof half of formal
@@ -119,7 +121,7 @@ The hybrid this digest lands on spans two components: pseudocode + light spec (g
   - [OpenAI, "Harness engineering" with Codex](https://openai.com/index/harness-engineering/) - real harness: custom linters, structural tests, observability, cleanup agents
   - [SWE-bench](https://github.com/SWE-bench/SWE-bench) - containerized eval harness that runs agents against real GitHub issues
   - [OpenAI Codex CLI (repo)](https://github.com/openai/codex) - open-source terminal coding agent the article builds on
-- **Deep dive:** [[writing/keeping-the-robots-honest/harness-engineering|harness engineering]] - components, other approaches, and open problems. Its context/state layer has its own note: [[writing/keeping-the-robots-honest/agent-memory-architecture|context & memory architecture]]
+- **Deep dive:** [[notes/keeping-the-robots-honest/harness-engineering|harness engineering]] - components, other approaches, and open problems. Its context/state layer has its own note: [[notes/keeping-the-robots-honest/agent-memory-architecture|context & memory architecture]]
 
 ## 8. Human on the loop
 

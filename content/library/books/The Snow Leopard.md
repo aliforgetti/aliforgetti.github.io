@@ -9,7 +9,7 @@ publish: true
 
 A Himalayan trek in 1973, a snow leopard never seen,
 and the inner climb that mattered more. Reading for
-[[books for whitney|whitney]].
+[[notes/books-for-tumanguya|tumanguya]].
 
 ## notes
 
