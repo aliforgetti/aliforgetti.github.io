@@ -73,3 +73,7 @@ Under all of it, one question keeps you honest: are you keeping the thinking (in
 ## the through-line
 
 The hybrid you land on (pseudocode + tests + light spec) is not separate from the harness. Its tests are the harness's sensors and its spec is a guide. Choosing how you specify is partly building the environment that checks the work.
+
+## the larger question
+
+All of this is linked to a much wider question one I keep circling: [[threads/what-makes-a-good-system|what makes a good system?]]

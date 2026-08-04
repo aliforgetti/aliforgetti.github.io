@@ -1,6 +1,7 @@
 # macOS / filesystem junk
 .DS_Store
 .fuse_hidden*
+__pycache__/
 
 # build output and deps
 node_modules
@@ -13,6 +14,16 @@ quartz/cli/tui/dist/
 
 # never publish, never commit
 content/private/
+
+# agent guides live here so they auto-load, but they
+# point into private/ and are not for the public repo
+CLAUDE.md
+AGENTS.md
+
+# the daily template describes my private routine.
+# it has to sit in templates/ for Obsidian to find it,
+# but it doesn't belong in a public repo.
+content/templates/daily.md
 
 # obsidian workspace state (machine-specific)
 .obsidian
