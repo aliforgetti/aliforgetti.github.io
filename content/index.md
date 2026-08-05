@@ -9,6 +9,7 @@ Compendiums of body, heart, and thought.
 - [[threads/index|Threads]] · things I'm circling
 - [[projects/index|Projects]] · things I'm walking toward
 - [[library/index|Library]] · things I keep
+- [[recipes/index|Recipes]] · things I cook
 
 ---
 

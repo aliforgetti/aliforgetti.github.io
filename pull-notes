@@ -1,0 +1,76 @@
+#!/bin/bash
+# pull-notes - drains one Apple Note into today's daily inbox.
+#
+#   ./pull-notes           (uses the note named "inbox")
+#
+# The deal: keep ONE Apple Note called "inbox". Anything you
+# put there - Siri, lock screen, share sheet - gets MOVED into
+# today's daily note's ## inbox, and the Apple Note is emptied.
+# Move, never copy: no duplicates possible. Then `tidy` files
+# prefixed tasks onward, and the board sees any tags. So:
+#   "Hey Siri, add 'Push AE - check the run #soon' to my
+#    inbox note" -> on the board within the half hour.
+#
+# Your other Apple Notes (NOW, everything else) are never
+# touched - only the note named below.
+#
+# FIRST RUN: do it from Terminal. macOS will ask permission
+# for it to control Notes - click Allow. Runs inside
+# autopublish after that.
+
+NOTE_NAME="inbox"
+REPO="$(cd "$(dirname "$0")" && pwd)"
+DAILY_DIR="$REPO/content/private/daily"
+TEMPLATE="$REPO/content/templates/daily.md"
+TODAY=$(date "+%Y-%m-%d")
+TODAY_NOTE="$DAILY_DIR/$TODAY.md"
+
+# 1. read the note's plain text (fails quietly if it doesn't exist)
+TEXT=$(osascript -e "tell application \"Notes\" to get plaintext of note \"$NOTE_NAME\"" 2>/dev/null)
+if [ -z "$TEXT" ]; then
+  echo "pull-notes: no Apple Note named '$NOTE_NAME' (or it is empty)."
+  exit 0
+fi
+
+# 2. drop the title line and blank lines; bail if nothing left
+BODY=$(printf '%s\n' "$TEXT" | tail -n +2 | sed '/^[[:space:]]*$/d')
+if [ -z "$BODY" ]; then
+  echo "pull-notes: nothing to move."
+  exit 0
+fi
+
+# 3. make sure today's daily note exists (create from template)
+if [ ! -f "$TODAY_NOTE" ]; then
+  sed "s/{{date}}/$TODAY/g" "$TEMPLATE" > "$TODAY_NOTE"
+  echo "pull-notes: created $TODAY.md"
+fi
+
+# 4. append each line under ## inbox (as bullets, unless the
+#    line already is a task or bullet)
+python3 - "$TODAY_NOTE" <<PYEOF
+import sys, re
+path = sys.argv[1]
+body = """$BODY"""
+lines = open(path, encoding="utf-8").read().split("\n")
+new = []
+for l in body.split("\n"):
+    l = l.strip()
+    if not l: continue
+    if not re.match(r"^- ", l): l = "- " + l
+    new.append(l)
+start = end = None
+for i, l in enumerate(lines):
+    if start is None and l.strip() == "## inbox": start = i + 1
+    elif start is not None and l.startswith("## "): end = i; break
+if start is None:
+    lines += ["", "## inbox", ""] + new
+else:
+    if end is None: end = len(lines)
+    while end > start and not lines[end-1].strip(): end -= 1
+    lines[end:end] = new
+open(path, "w", encoding="utf-8").write("\n".join(lines).rstrip("\n") + "\n")
+print(f"pull-notes: moved {len(new)} line(s) into $TODAY.md inbox")
+PYEOF
+
+# 5. empty the Apple Note (title stays, content cleared)
+osascript -e "tell application \"Notes\" to set body of note \"$NOTE_NAME\" to \"$NOTE_NAME\"" > /dev/null 2>&1
