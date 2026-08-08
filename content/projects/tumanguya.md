@@ -37,3 +37,6 @@ Questions this project is pulling on. They'll outlive it.
 ## training
 
 Tracked privately. A summary goes up after the climb.
+
+
+[[tumanguya - body]]

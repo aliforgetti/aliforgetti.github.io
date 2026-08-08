@@ -51,6 +51,9 @@ git pull --rebase --autostash origin v5 >> "$LOG" 2>&1 || true
 #     failure should not block anything - log and go on.
 ./pull-notes >> "$LOG" 2>&1 || true
 
+# 1.45 carry yesterday's unfinished day-plan into today.
+./carry >> "$LOG" 2>&1 || true
+
 # 1.5 tidy: file horizon tasks into streams, log finished ones.
 #     failure should not block publishing - log and go on.
 if ! ./tidy >> "$LOG" 2>&1; then

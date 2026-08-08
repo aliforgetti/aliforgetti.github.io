@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+"""
+carry - moves yesterday's unfinished day-plan into today.
+
+    ./carry
+
+Runs inside autopublish; run by hand any time. What it does:
+
+  every UNCHECKED "- [ ]" task in the ## work / ## life /
+  ## inbox sections of any PAST daily note is MOVED into
+  the same section of today's note (created from the
+  template if needed). In ## inbox, plain bullets carry
+  too - captures are captures. In work/life, bullets stay
+  (they're notes about that day).
+
+What stays behind, as history:
+  checked [x] tasks (tidy logs the prefixed ones), thoughts
+  and bullets, the ## notes section, everything else.
+
+Move, never copy. Tags ride along, so the board never
+loses sight of anything mid-carry.
+"""
+
+import datetime
+import os
+import re
+import sys
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+DAILY = os.path.join(ROOT, "content", "private", "daily")
+TEMPLATE = os.path.join(ROOT, "content", "templates", "daily.md")
+
+today = datetime.date.today().isoformat()
+today_path = os.path.join(DAILY, today + ".md")
+SECTIONS = ["## work", "## life", "## inbox"]
+TASK = re.compile(r"\s*- \[ \] \S")
+BULLET = re.compile(r"\s*- (?!\[)\S")   # plain bullet, not a checkbox
+
+
+def bounds(lines, heading):
+    start = None
+    for i, l in enumerate(lines):
+        if start is None and l.strip() == heading:
+            start = i + 1
+        elif start is not None and l.startswith("## "):
+            return start, i
+    return (start, len(lines)) if start is not None else (None, None)
+
+
+# collect from every past day
+moved = {h: [] for h in SECTIONS}
+count = 0
+for name in sorted(os.listdir(DAILY)):
+    if not name.endswith(".md") or name[:-3] >= today:
+        continue
+    path = os.path.join(DAILY, name)
+    lines = open(path, encoding="utf-8").read().split("\n")
+    changed = False
+    for heading in SECTIONS:
+        s, e = bounds(lines, heading)
+        if s is None:
+            continue
+        # inbox: bullets carry too (captures are often bullets).
+        # work/life: tasks only - bullets there are day notes.
+        want = (lambda l: TASK.match(l) or BULLET.match(l)) \
+            if heading == "## inbox" else TASK.match
+        keep, i = [], s
+        while i < e:
+            if want(lines[i]):
+                block = [lines[i]]
+                i += 1
+                while i < e and lines[i].strip() and lines[i].startswith(("\t", "    ")):
+                    block.append(lines[i]); i += 1
+                moved[heading].append(block)
+                count += 1
+                changed = True
+            else:
+                keep.append(lines[i]); i += 1
+        if changed:
+            lines = lines[:s] + keep + lines[e:]
+    if changed:
+        open(path, "w", encoding="utf-8").write("\n".join(lines).rstrip("\n") + "\n")
+
+if count == 0:
+    print("carry: nothing to carry.")
+    sys.exit(0)
+
+# make sure today exists
+if not os.path.isfile(today_path):
+    t = open(TEMPLATE, encoding="utf-8").read().replace("{{date}}", today)
+    open(today_path, "w", encoding="utf-8").write(t)
+    print(f"carry: created {today}.md")
+
+# append into today's matching sections
+lines = open(today_path, encoding="utf-8").read().split("\n")
+for heading in SECTIONS:
+    blocks = moved[heading]
+    if not blocks:
+        continue
+    s, e = bounds(lines, heading)
+    if s is None:                      # section missing - add at end
+        lines += ["", heading, ""]
+        s, e = bounds(lines, heading)
+    while e > s and not lines[e - 1].strip():
+        e -= 1
+    flat = [l for b in blocks for l in b]
+    lines[e:e] = flat
+open(today_path, "w", encoding="utf-8").write("\n".join(lines).rstrip("\n") + "\n")
+
+print(f"carry: moved {count} task(s) into {today}.md")
