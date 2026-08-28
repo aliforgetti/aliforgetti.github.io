@@ -20,10 +20,12 @@ content/private/
 CLAUDE.md
 AGENTS.md
 
-# the daily template describes my private routine.
-# it has to sit in templates/ for Obsidian to find it,
-# but it doesn't belong in a public repo.
+# these templates describe my private routine.
+# they have to sit in templates/ for Obsidian to find them,
+# but they don't belong in a public repo.
 content/templates/daily.md
+content/templates/decision.md
+content/templates/research.md
 
 # obsidian workspace state (machine-specific)
 .obsidian
