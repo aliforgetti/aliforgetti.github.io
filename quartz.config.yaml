@@ -136,6 +136,10 @@ plugins:
       passwordField: password
       unlistWhenEncrypted: false
       outputPath: static/encryptedContentIndex.json
+    order: 65
+    layout:
+      position: beforeBody
+      priority: 15
   - source: "@quartz-community/stacked-pages"
     enabled: false
     layout:
